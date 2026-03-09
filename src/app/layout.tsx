@@ -40,17 +40,18 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
-      <body className="bg-[#03070A] text-white antialiased">
+      <body className="bg-[#071C28] text-white antialiased">
         <StoreProvider>
-          {/* Ambient glow */}
+          {/* Ambient ocean glow */}
           <div
             aria-hidden
             className="pointer-events-none fixed inset-0 z-0"
             style={{
               background: [
-                "radial-gradient(ellipse 80% 50% at 50% -15%, rgba(96,165,250,0.13) 0%, transparent 60%)",
-                "radial-gradient(ellipse 50% 40% at 90% 15%, rgba(45,212,191,0.07) 0%, transparent 55%)",
-                "radial-gradient(ellipse 40% 35% at 5% 80%,  rgba(59,130,246,0.06) 0%, transparent 50%)",
+                "radial-gradient(ellipse 90% 55% at 50% -10%, rgba(7,51,68,0.90) 0%, transparent 65%)",
+                "radial-gradient(ellipse 60% 45% at 95% 10%,  rgba(45,212,191,0.08) 0%, transparent 55%)",
+                "radial-gradient(ellipse 50% 40% at 5%  85%,  rgba(45,212,191,0.06) 0%, transparent 50%)",
+                "radial-gradient(ellipse 70% 50% at 50% 110%, rgba(7,28,40,0.95) 0%, transparent 60%)",
               ].join(","),
             }}
           />

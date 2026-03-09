@@ -56,7 +56,7 @@ const EMPTY: Form = {
 };
 
 const FIELD_LABEL = "mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-white/30";
-const INPUT = "w-full border border-white/10 bg-white/4 px-4 py-3 text-[15px] text-white/88 placeholder-white/24 focus:border-white/26 focus:outline-none transition";
+const INPUT = "w-full border border-[rgba(45,200,190,0.12)] bg-[rgba(7,51,68,0.3)] px-4 py-3 text-[15px] text-white/88 placeholder-white/24 focus:border-[rgba(232,114,74,0.35)] focus:outline-none transition";
 
 export default function SellPage() {
   const [step, setStep] = useState(0);
@@ -211,7 +211,7 @@ export default function SellPage() {
           <span className="ml-auto text-[12px] font-medium text-white/28">{step + 1} / {STEPS.length}</span>
         </div>
         <div className="h-[2px] w-full rounded-full bg-white/7 overflow-hidden">
-          <div className="h-full rounded-full bg-white/65 transition-all duration-400" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
+          <div className="h-full rounded-full bg-[#E8724A] transition-all duration-400" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
         </div>
         <div className="mt-2.5 flex justify-between">
           {STEPS.map((s, i) => (
@@ -226,7 +226,7 @@ export default function SellPage() {
         {step === 0 && (
           <div className="fade-up">
             <div className="mb-1 flex items-center gap-2">
-              <span className="rounded-full border border-blue-400/30 bg-blue-400/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-blue-300">KI-Assistent</span>
+              <span className="tag-teal">KI-Assistent</span>
             </div>
             <h2 className="mb-1 text-[24px] font-semibold tracking-[-0.05em]">Foto hochladen</h2>
             <p className="mb-6 text-[14px] text-white/40">Fotografiere dein Tier oder deine Koralle — die KI erkennt automatisch die Art und schlägt Preis & Beschreibung vor.</p>
@@ -239,9 +239,9 @@ export default function SellPage() {
                   onDrop={onDrop}
                   onDragOver={(e) => e.preventDefault()}
                   onClick={() => fileRef.current?.click()}
-                  className="group relative flex flex-col items-center justify-center gap-3 border-2 border-dashed border-white/12 bg-white/2 py-14 transition-all hover:border-white/22 hover:bg-white/4 cursor-pointer"
+                  className="group relative flex flex-col items-center justify-center gap-3 border-2 border-dashed border-[rgba(45,200,190,0.15)] bg-[rgba(7,51,68,0.2)] py-14 transition-all hover:border-[rgba(45,200,190,0.30)] hover:bg-[rgba(7,51,68,0.35)] cursor-pointer rounded-xl"
                 >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/5 transition group-hover:border-white/20 group-hover:bg-white/8">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[rgba(45,200,190,0.18)] bg-[rgba(45,200,190,0.05)] transition group-hover:border-[rgba(45,200,190,0.32)] group-hover:bg-[rgba(45,200,190,0.10)]">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white/40">
                       <path d="M12 5v14M5 12l7-7 7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -373,7 +373,7 @@ export default function SellPage() {
                               <button
                                 key={opt}
                                 onClick={() => setFollowUpAnswers((p) => ({ ...p, [q.id]: opt }))}
-                                className={`rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${followUpAnswers[q.id] === opt ? "border-blue-400/40 bg-blue-400/12 text-blue-300" : "border-white/10 text-white/40 hover:border-white/22 hover:text-white/65"}`}
+                                className={`rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${followUpAnswers[q.id] === opt ? "border-[rgba(232,114,74,0.45)] bg-[rgba(232,114,74,0.12)] text-[#FF9972]" : "border-[rgba(45,200,190,0.12)] text-white/40 hover:border-[rgba(45,200,190,0.25)] hover:text-white/65"}`}
                               >
                                 {opt}
                               </button>
@@ -383,7 +383,7 @@ export default function SellPage() {
                           <input
                             value={followUpAnswers[q.id] ?? ""}
                             onChange={(e) => setFollowUpAnswers((p) => ({ ...p, [q.id]: e.target.value }))}
-                            className="w-full border border-white/10 bg-white/4 px-3 py-2 text-[14px] text-white/80 placeholder-white/24 focus:border-white/22 focus:outline-none"
+                            className="w-full border border-[rgba(45,200,190,0.12)] bg-[rgba(7,51,68,0.3)] px-3 py-2 text-[14px] text-white/80 placeholder-white/24 focus:border-[rgba(232,114,74,0.35)] focus:outline-none"
                             placeholder="Deine Antwort…"
                           />
                         )}
@@ -412,7 +412,7 @@ export default function SellPage() {
             <div className="space-y-2">
               {CATS.map((c) => (
                 <button key={c.label} onClick={() => set("category", c.label)}
-                  className={`flex w-full items-center gap-4 border px-4 py-4 text-left transition-all duration-150 ${form.category === c.label ? "border-white/32 bg-white/7" : "border-white/8 hover:border-white/16 hover:bg-white/3"}`}>
+                  className={`flex w-full items-center gap-4 border px-4 py-4 text-left transition-all duration-150 ${form.category === c.label ? "border-[rgba(232,114,74,0.35)] bg-[rgba(232,114,74,0.07)]" : "border-[rgba(45,200,190,0.09)] hover:border-[rgba(45,200,190,0.18)] hover:bg-[rgba(7,51,68,0.3)]"}`}>
                   <span className="text-[28px] leading-none shrink-0">{c.icon}</span>
                   <div>
                     <p className="text-[15px] font-semibold">{c.label}</p>
@@ -464,7 +464,7 @@ export default function SellPage() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {CONDITIONS.map((c) => (
                   <button key={c} onClick={() => set("condition", c)}
-                    className={`py-3 text-[13px] font-medium border transition ${form.condition === c ? "border-white/32 bg-white/8 text-white" : "border-white/8 text-white/40 hover:border-white/18"}`}>
+                    className={`py-3 text-[13px] font-medium border transition ${form.condition === c ? "border-[rgba(232,114,74,0.35)] bg-[rgba(232,114,74,0.08)] text-white" : "border-[rgba(45,200,190,0.09)] text-white/40 hover:border-[rgba(45,200,190,0.18)]"}`}>
                     {c}
                   </button>
                 ))}
@@ -500,7 +500,7 @@ export default function SellPage() {
               )}
               <div className="flex gap-2">
                 <select value={form.currency} onChange={(e) => set("currency", e.target.value as "CHF" | "EUR")}
-                  className="border border-white/10 bg-white/4 px-3 py-3 text-[14px] text-white/60 focus:outline-none focus:border-white/22">
+                  className="border border-[rgba(45,200,190,0.12)] bg-[rgba(7,51,68,0.3)] px-3 py-3 text-[14px] text-white/60 focus:outline-none focus:border-[rgba(232,114,74,0.35)]">
                   <option value="CHF">CHF</option>
                   <option value="EUR">EUR</option>
                 </select>
@@ -529,13 +529,13 @@ export default function SellPage() {
                   { key: "shipping" as const, label: "Versand möglich", sub: "Lebendversand Schweiz" },
                 ].map((opt) => (
                   <button key={opt.key} onClick={() => set(opt.key, !form[opt.key])}
-                    className={`flex w-full items-center justify-between px-4 py-3.5 border text-left transition ${form[opt.key] ? "border-white/28 bg-white/6" : "border-white/8 hover:border-white/16"}`}>
+                    className={`flex w-full items-center justify-between px-4 py-3.5 border text-left transition ${form[opt.key] ? "border-[rgba(232,114,74,0.35)] bg-[rgba(232,114,74,0.07)]" : "border-[rgba(45,200,190,0.09)] hover:border-[rgba(45,200,190,0.18)]"}`}>
                     <div>
                       <p className="text-[14px] font-medium">{opt.label}</p>
                       <p className="text-[12px] text-white/34">{opt.sub}</p>
                     </div>
-                    <div className={`h-5 w-5 shrink-0 border transition flex items-center justify-center ${form[opt.key] ? "border-white bg-white" : "border-white/22"}`}>
-                      {form[opt.key] && <svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="#03070A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                    <div className={`h-5 w-5 shrink-0 border transition flex items-center justify-center ${form[opt.key] ? "border-[#E8724A] bg-[#E8724A]" : "border-white/22"}`}>
+                      {form[opt.key] && <svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                     </div>
                   </button>
                 ))}
@@ -554,7 +554,7 @@ export default function SellPage() {
             <h2 className="mb-1 text-[24px] font-semibold tracking-[-0.05em]">Vorschau</h2>
             <p className="mb-6 text-[14px] text-white/40">So sieht dein Inserat aus</p>
 
-            <div className="border border-white/10 overflow-hidden">
+            <div className="border border-[rgba(45,200,190,0.12)] overflow-hidden rounded-xl">
               <div className="h-48 overflow-hidden bg-[#060D13]">
                 {form.imagePreview ? (
                   <img src={form.imagePreview} alt={form.title} className="h-full w-full object-cover" />
@@ -604,23 +604,21 @@ export default function SellPage() {
           {step === 0 && aiState === "done" ? (
             <button
               onClick={applyAI}
-              className="flex-1 bg-white py-3.5 text-[14px] font-semibold text-black transition hover:bg-white/92 active:scale-[0.98]"
-              style={{ boxShadow: "0 6px 20px rgba(255,255,255,0.10)" }}
+              className="flex-1 btn-coral py-3.5 text-[14px] font-semibold active:scale-[0.98]"
             >
               KI-Ergebnis übernehmen & weiter →
             </button>
           ) : step === 0 && aiState !== "analyzing" && aiState !== "uploading" ? (
             <button
               onClick={() => setStep(1)}
-              className="flex-1 border border-white/10 py-3.5 text-[14px] font-medium text-white/50 transition hover:border-white/22 hover:text-white/75"
+              className="flex-1 border border-[rgba(45,200,190,0.14)] py-3.5 text-[14px] font-medium text-white/50 transition hover:border-[rgba(45,200,190,0.28)] hover:text-white/75"
             >
               Überspringen
             </button>
           ) : step === 0 ? null : (
             <button
               onClick={step < STEPS.length - 1 ? next : publish}
-              className="flex-1 bg-white py-3.5 text-[14px] font-semibold text-black transition hover:bg-white/92 active:scale-[0.98] disabled:opacity-40"
-              style={{ boxShadow: "0 6px 20px rgba(255,255,255,0.10)" }}
+              className="flex-1 btn-coral py-3.5 text-[14px] font-semibold active:scale-[0.98] disabled:opacity-40"
             >
               {step === STEPS.length - 1 ? "Jetzt veröffentlichen" : "Weiter"}
             </button>

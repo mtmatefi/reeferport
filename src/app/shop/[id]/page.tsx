@@ -82,7 +82,7 @@ export default function ShopPage({ params }: { params: Promise<{ id: string }> }
                 <div className="absolute -bottom-0.5 -right-0.5 rounded-full bg-[#03070A] p-0.5">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                      stroke="#60A5FA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      stroke="#2DD4BF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
               )}
@@ -116,7 +116,7 @@ export default function ShopPage({ params }: { params: Promise<{ id: string }> }
 
       <div className="px-4 sm:px-6 lg:px-8">
         {/* Stats bar */}
-        <div className="mt-5 grid grid-cols-3 sm:grid-cols-4 border border-white/7 divide-x divide-white/7">
+        <div className="mt-5 grid grid-cols-3 sm:grid-cols-4 border border-[rgba(45,200,190,0.09)] divide-x divide-[rgba(45,200,190,0.09)] rounded-xl overflow-hidden">
           {[
             { v: `${seller.salesCount.toLocaleString("de-CH")}+`, l: "Verkäufe" },
             { v: `★ ${seller.rating}`,  l: "Bewertung" },
@@ -132,7 +132,7 @@ export default function ShopPage({ params }: { params: Promise<{ id: string }> }
 
         {/* About */}
         {seller.bio && (
-          <div className="mt-5 border border-white/7 p-4">
+          <div className="mt-5 border border-[rgba(45,200,190,0.09)] p-4 rounded-xl">
             <p className="text-[13px] leading-[1.7] text-white/54">{seller.bio}</p>
             <div className="mt-3 flex flex-wrap gap-3 text-[12px] text-white/36">
               <span className="flex items-center gap-1.5">
@@ -161,7 +161,7 @@ export default function ShopPage({ params }: { params: Promise<{ id: string }> }
                 className={`relative shrink-0 pb-3 text-[13px] font-medium tracking-[-0.02em] transition-colors ${active ? "text-white" : "text-white/32 hover:text-white/62"}`}>
                 {t}
                 <span className={`ml-1.5 text-[11px] tabular-nums ${active ? "text-white/50" : "text-white/20"}`}>{count}</span>
-                {active && <span className="absolute inset-x-0 bottom-0 h-[1.5px] bg-white/70 rounded-t-full" />}
+                {active && <span className="absolute inset-x-0 bottom-0 h-[1.5px] bg-[#E8724A] rounded-t-full" />}
               </button>
             );
           })}

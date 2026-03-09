@@ -52,7 +52,7 @@ export default function HomePage() {
       </header>
 
       {/* ── Tab bar ────────────────────────────────────────── */}
-      <div className="mb-7 flex gap-6 border-b border-white/7 pb-0 no-scrollbar overflow-x-auto">
+      <div className="mb-7 flex gap-6 border-b border-[rgba(45,200,190,0.08)] pb-0 no-scrollbar overflow-x-auto">
         {tabs.map((t) => {
           const active = t === tab;
           return (
@@ -61,11 +61,11 @@ export default function HomePage() {
               onClick={() => setTab(t)}
               className={[
                 "relative shrink-0 pb-3 text-[15px] font-medium tracking-[-0.02em] transition-colors duration-200",
-                active ? "text-white" : "text-white/32 hover:text-white/64",
+                active ? "text-[#FF9972]" : "text-white/32 hover:text-white/64",
               ].join(" ")}
             >
               {t}
-              {active && <span className="absolute inset-x-0 bottom-0 h-[1.5px] bg-white/75 rounded-t-full" />}
+              {active && <span className="absolute inset-x-0 bottom-0 h-[1.5px] bg-[#E8724A] rounded-t-full" />}
             </button>
           );
         })}
@@ -81,7 +81,7 @@ export default function HomePage() {
             {/* Right panel */}
             <div className="mt-5 lg:mt-0 flex flex-col gap-4">
               {/* Stats – dynamic */}
-              <div className="grid grid-cols-3 border border-white/7 divide-x divide-white/7">
+              <div className="grid grid-cols-3 border border-[rgba(45,200,190,0.09)] divide-x divide-[rgba(45,200,190,0.09)]">
                 {[
                   { n: listings.length.toString(), label: "Inserate" },
                   { n: sellers.length.toString(),  label: "Verkäufer" },
@@ -95,12 +95,12 @@ export default function HomePage() {
               </div>
 
               {/* Trending tags */}
-              <div className="hidden lg:block border border-white/7 p-4">
+              <div className="hidden lg:block border border-[rgba(45,200,190,0.09)] p-4">
                 <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/26">Trending</p>
                 <div className="flex flex-wrap gap-2">
                   {["LPS", "SPS", "WYSIWYG", "Nachzucht", "Euphyllia", "Zoanthus"].map((tag) => (
                     <Link key={tag} href={`/search?q=${tag}`}
-                      className="rounded-full border border-white/8 px-2.5 py-1 text-[12px] text-white/44 transition hover:border-white/20 hover:text-white/72">
+                      className="rounded-full border border-[rgba(45,200,190,0.12)] bg-[rgba(7,51,68,0.3)] px-2.5 py-1 text-[12px] text-white/44 transition hover:border-[rgba(232,114,74,0.25)] hover:text-[#FF9972]">
                       #{tag}
                     </Link>
                   ))}
@@ -108,17 +108,17 @@ export default function HomePage() {
               </div>
 
               {/* Seller spotlight */}
-              <div className="hidden lg:block border border-white/7 p-4">
+              <div className="hidden lg:block border border-[rgba(45,200,190,0.09)] p-4">
                 <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/26">Top Shops</p>
                 {[
                   { id: "s6", name: "ReefAlliance Shop",  sub: "Official · ★ 4.9", img: "https://i.pravatar.cc/150?img=33", official: true },
                   { id: "s1", name: "CoralHaus Luzern",   sub: "Händler · ★ 4.9",  img: "https://i.pravatar.cc/150?img=3",  official: false },
                   { id: "s3", name: "ReefLab Zürich",     sub: "Händler · ★ 5.0",  img: "https://i.pravatar.cc/150?img=7",  official: false },
                 ].map((s) => (
-                  <div key={s.name} className="flex items-center gap-3 py-2.5 border-b border-white/6 last:border-0">
+                  <div key={s.name} className="flex items-center gap-3 py-2.5 border-b border-[rgba(45,200,190,0.07)] last:border-0">
                     <div className="relative">
                       <img src={s.img} alt={s.name} className="h-8 w-8 rounded-full object-cover" />
-                      {s.official && <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full bg-[#2DD4BF] ring-2 ring-[#03070A]" />}
+                      {s.official && <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full bg-[#2DD4BF] ring-2 ring-[#071C28]" />}
                     </div>
                     <div>
                       <p className="text-[13px] font-medium text-white/84">{s.name}</p>
@@ -130,10 +130,10 @@ export default function HomePage() {
               </div>
 
               {/* Insert CTA */}
-              <div className="hidden lg:block border border-white/7 p-4">
+              <div className="hidden lg:block border border-[rgba(45,200,190,0.09)] p-4">
                 <p className="text-[14px] font-semibold tracking-[-0.03em] mb-1">Jetzt inserieren</p>
                 <p className="text-[13px] text-white/38 mb-3.5">Zeige deine Korallen der Community.</p>
-                <Link href="/sell" className="flex items-center justify-center gap-2 bg-white py-3 text-[13px] font-semibold text-black transition hover:bg-white/92" style={{ boxShadow: "0 6px 20px rgba(255,255,255,0.10)" }}>
+                <Link href="/sell" className="flex items-center justify-center gap-2 btn-coral py-3 text-[13px] rounded-lg">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/></svg>
                   Inserat erstellen
                 </Link>
@@ -152,8 +152,8 @@ export default function HomePage() {
                   className={[
                     "flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-medium transition-all duration-200",
                     active
-                      ? "border-white/28 bg-white/9 text-white"
-                      : "border-white/7 text-white/40 hover:border-white/16 hover:text-white/70",
+                      ? "border-[rgba(232,114,74,0.35)] bg-[rgba(232,114,74,0.12)] text-[#FF9972]"
+                      : "border-[rgba(45,200,190,0.09)] text-white/40 hover:border-[rgba(232,114,74,0.22)] hover:text-white/70",
                   ].join(" ")}
                 >
                   <span className="text-[13px]">{c.icon}</span>
@@ -169,7 +169,7 @@ export default function HomePage() {
           </div>
 
           {/* ── Listings grid ────────────────────────────────── */}
-          <div className="border-t border-white/7 pt-1">
+          <div className="border-t border-[rgba(45,200,190,0.08)] pt-1">
             <div className="mb-4 flex items-baseline justify-between pt-4">
               <h2 className="text-[18px] font-semibold tracking-[-0.04em] text-white/90">
                 {cat === "Alle" ? "Alle Inserate" : cat}

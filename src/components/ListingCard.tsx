@@ -10,7 +10,7 @@ export default function ListingCard({ listing, rank }: Props) {
   const saved = isSaved(listing.id);
 
   return (
-    <article className="group relative border-b border-white/6 py-5 last:border-0">
+    <article className="group relative border-b border-[rgba(45,200,190,0.08)] py-5 last:border-0">
       {/* ── Bookmark – absolute top-right, outside Link ── */}
       <button
         onClick={() => toggleSaved(listing.id)}
@@ -31,7 +31,7 @@ export default function ListingCard({ listing, rank }: Props) {
       {/* ── Main link – right padding so title doesn't run into bookmark ── */}
       <Link href={`/listing/${listing.id}`} className="flex gap-4 pr-8">
         {/* Image */}
-        <div className="relative h-[118px] w-[88px] sm:h-[128px] sm:w-[96px] shrink-0 overflow-hidden bg-[#060D13]">
+        <div className="relative h-[118px] w-[88px] sm:h-[128px] sm:w-[96px] shrink-0 overflow-hidden bg-[#0D2435] rounded-lg">
           <img
             src={listing.image}
             alt={listing.title}
@@ -59,9 +59,7 @@ export default function ListingCard({ listing, rank }: Props) {
               {listing.category}
             </span>
             {listing.listingType === "B2C" && (
-              <span className="rounded-full border border-[rgba(96,165,250,0.22)] bg-[rgba(96,165,250,0.09)] px-2 py-0.5 text-[10px] text-[#93C5FD]">
-                Händler
-              </span>
+              <span className="tag-coral">Händler</span>
             )}
             <span className="rounded-full border border-white/8 bg-white/4 px-2 py-0.5 text-[10px] text-white/40">
               {listing.condition}

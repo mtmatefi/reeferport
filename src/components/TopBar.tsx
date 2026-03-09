@@ -46,7 +46,7 @@ export default function TopBar() {
       className={[
         "fixed inset-x-0 top-0 z-30 transition-all duration-300",
         scrolled
-          ? "border-b border-white/8 bg-[rgba(3,7,10,0.92)] backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.4)]"
+          ? "border-b border-[rgba(45,200,190,0.10)] bg-[rgba(7,28,40,0.94)] backdrop-blur-xl shadow-[0_4px_32px_rgba(0,0,0,0.5)]"
           : "bg-transparent",
       ].join(" ")}
     >
@@ -85,10 +85,10 @@ export default function TopBar() {
                   active
                     ? isOfficial
                       ? "bg-[rgba(45,212,191,0.12)] text-[#5EEAD4]"
-                      : "bg-white/9 text-white"
+                      : "bg-[rgba(232,114,74,0.12)] text-[#FF9972]"
                     : isOfficial
                     ? "text-[#5EEAD4]/55 hover:bg-[rgba(45,212,191,0.07)] hover:text-[#5EEAD4]/80"
-                    : "text-white/45 hover:text-white/80 hover:bg-white/5",
+                    : "text-white/45 hover:text-white/75 hover:bg-[rgba(45,200,190,0.07)]",
                 ].join(" ")}
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="shrink-0">
@@ -101,7 +101,7 @@ export default function TopBar() {
                   </span>
                 )}
                 {isInbox && totalUnread > 0 && (
-                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#60A5FA] px-1 text-[9px] font-semibold text-black">
+                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#E8724A] px-1 text-[9px] font-semibold text-white">
                     {totalUnread}
                   </span>
                 )}
@@ -122,7 +122,7 @@ export default function TopBar() {
                 onKeyDown={(e) => e.key === "Escape" && setSearchOpen(false)}
                 onBlur={() => !query && setSearchOpen(false)}
                 placeholder="Suchen…"
-                className="w-40 rounded-xl border border-white/12 bg-white/6 px-3 py-1.5 text-[13px] text-white placeholder-white/30 outline-none focus:border-blue-400/40 focus:w-56 transition-all duration-200"
+                className="w-40 rounded-xl border border-[rgba(45,200,190,0.18)] bg-[rgba(7,51,68,0.5)] px-3 py-1.5 text-[13px] text-white placeholder-white/30 outline-none focus:border-[rgba(232,114,74,0.40)] focus:w-56 transition-all duration-200"
               />
             </form>
           ) : (
@@ -137,16 +137,10 @@ export default function TopBar() {
             </button>
           )}
 
-          {/* Inserieren CTA */}
+          {/* Inserieren CTA – Coral */}
           <Link
             href="/sell"
-            className={[
-              "hidden md:flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[13px] font-semibold transition-all duration-300",
-              scrolled
-                ? "bg-white text-black hover:bg-white/90 shadow-[0_4px_16px_rgba(255,255,255,0.10)]"
-                : "bg-white text-black hover:bg-white/90 shadow-[0_4px_20px_rgba(255,255,255,0.12)]",
-              "active:scale-[0.97]",
-            ].join(" ")}
+            className="hidden md:flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[13px] font-semibold btn-coral active:scale-[0.97] transition-all duration-300"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
               <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
@@ -165,7 +159,7 @@ export default function TopBar() {
               ].join(" ")}
             />
             {session && (
-              <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#22C55E] ring-1 ring-[#03070A]" />
+              <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#22C55E] ring-1 ring-[#071C28]" />
             )}
           </Link>
         </div>

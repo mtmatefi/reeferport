@@ -1,16 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --bg:        #03070A;
-  --bg-2:      #060D13;
-  --border:    rgba(255,255,255,0.07);
-  --border-md: rgba(255,255,255,0.12);
-  --border-lg: rgba(255,255,255,0.22);
-  --text-1:    rgba(255,255,255,0.95);
-  --text-2:    rgba(255,255,255,0.58);
-  --text-3:    rgba(255,255,255,0.34);
-  --accent:    #60A5FA;
-  --sidebar-w: 248px;
+  /* Backgrounds – Deep Ocean palette */
+  --bg:      #071C28;
+  --bg-2:    #0D2435;
+  --bg-card: rgba(7, 51, 68, 0.55);
+
+  /* Borders – subtle teal tint */
+  --border:    rgba(45, 200, 190, 0.09);
+  --border-md: rgba(45, 200, 190, 0.16);
+  --border-lg: rgba(45, 200, 190, 0.28);
+
+  /* Text – Sand palette */
+  --text-1: rgba(242, 238, 234, 0.96);
+  --text-2: rgba(242, 238, 234, 0.52);
+  --text-3: rgba(242, 238, 234, 0.30);
+
+  /* Coral – primary CTA / accent */
+  --coral:       #E8724A;
+  --coral-light: #FF8B6A;
+  --coral-dim:   rgba(232, 114, 74, 0.12);
+
+  /* Teal – secondary accent */
+  --teal:     #2DD4BF;
+  --teal-dim: rgba(45, 212, 191, 0.10);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -72,18 +85,54 @@ html {
 .stagger > *:nth-child(12) { animation-delay: 0.58s; }
 
 .skeleton {
-  background: linear-gradient(90deg,rgba(255,255,255,0.04) 0%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 100%);
+  background: linear-gradient(90deg,
+    rgba(45,212,191,0.04) 0%,
+    rgba(45,212,191,0.10) 50%,
+    rgba(45,212,191,0.04) 100%
+  );
   background-size: 600px 100%;
   animation: shimmer 1.6s ease-in-out infinite;
 }
 
 .glass {
-  background: rgba(6,13,19,0.84);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(7, 28, 40, 0.90);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+
+/* ─── Coral CTA button ──────────────────────────────────────────────────── */
+.btn-coral {
+  background: var(--coral);
+  color: #fff;
+  font-weight: 600;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  box-shadow: 0 6px 20px rgba(232,114,74,0.28);
+}
+.btn-coral:hover  { background: var(--coral-light); box-shadow: 0 8px 28px rgba(232,114,74,0.38); }
+.btn-coral:active { transform: scale(0.97); }
+
+/* ─── Tag variants ──────────────────────────────────────────────────────── */
+.tag-coral {
+  border: 1px solid rgba(232,114,74,0.30);
+  background: rgba(232,114,74,0.10);
+  color: #FF9972;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+.tag-teal, .tag-blue {
+  border: 1px solid rgba(45,212,191,0.22);
+  background: rgba(45,212,191,0.08);
+  color: var(--teal);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
 }
 
 :focus-visible {
-  outline: 2px solid rgba(96,165,250,0.55);
+  outline: 2px solid rgba(232,114,74,0.55);
   outline-offset: 2px;
 }
