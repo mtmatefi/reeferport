@@ -43,14 +43,14 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<Tab>("Inserate");
 
   return (
-    <div className="pb-28">
+    <div className="pb-28 md:pb-10">
       {/* Hero banner */}
       <div className="relative h-28 bg-gradient-to-br from-[#0A1F35] via-[#061A2E] to-[#03070A]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(96,165,250,0.18),transparent_60%)]" />
       </div>
 
       {/* Profile header */}
-      <div className="relative px-5 pb-5">
+      <div className="relative px-4 sm:px-6 lg:px-8 pb-5">
         {/* Avatar */}
         <div className="relative -mt-12 mb-4 flex items-end justify-between">
           <div className="relative">
@@ -119,9 +119,9 @@ export default function ProfilePage() {
       </div>
 
       {/* Tab content */}
-      <div className="px-5 pt-4">
+      <div className="px-4 sm:px-6 lg:px-8 pt-4">
         {activeTab === "Inserate" && (
-          <div className="space-y-5 stagger">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-0 md:gap-x-8 stagger">
             {myListings.length === 0 ? (
               <p className="py-12 text-center text-[14px] text-white/38">
                 Noch keine Inserate
