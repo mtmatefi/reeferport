@@ -59,10 +59,43 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const [listing] = await db.insert(listings).values({
-      ...body,
-      sellerId: session.id,
-    }).returning();
+
+    // Extract only known fields to prevent injection of arbitrary columns
+    const values = {
+      title:       body.title as string,
+      latin:       (body.latin ?? "") as string,
+      price:       (body.price ?? 0) as number,
+      currency:    (body.currency ?? "CHF") as string,
+      subtitle:    (body.subtitle ?? "") as string,
+      description: body.description as string,
+      location:    body.location as string,
+      image:       body.image as string,
+      images:      (body.images ?? []) as string[],
+      category:    body.category as string,
+      subcategory: (body.subcategory ?? null) as string | null,
+      condition:   body.condition as string,
+      listingType: (body.listingType ?? "C2C") as string,
+      offerType:   (body.offerType ?? "sell") as string,
+      tags:        (body.tags ?? []) as string[],
+      badge:       (body.badge ?? null) as string | null,
+      shipping:    (body.shipping ?? false) as boolean,
+      shippingCost: (body.shippingCost ?? null) as number | null,
+      pickup:      (body.pickup ?? true) as boolean,
+      // CITES fields
+      citesRequired: (body.citesRequired ?? false) as boolean,
+      citesNumber:   (body.citesNumber ?? null) as string | null,
+      citesAppendix: (body.citesAppendix ?? null) as string | null,
+      citesSource:   (body.citesSource ?? null) as string | null,
+      // Equipment-specific fields
+      equipmentType: (body.equipmentType ?? null) as string | null,
+      brand:         (body.brand ?? null) as string | null,
+      wattage:       (body.wattage ?? null) as number | null,
+      tankSizeMin:   (body.tankSizeMin ?? null) as number | null,
+      tankSizeMax:   (body.tankSizeMax ?? null) as number | null,
+      sellerId:      session.id,
+    };
+
+    const [listing] = await db.insert(listings).values(values).returning();
     return NextResponse.json(listing, { status: 201 });
   } catch (e) {
     console.error(e);

@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 export interface Message {
   id: string;
@@ -122,7 +123,32 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // Listen for Supabase auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, sbSession) => {
+      if (sbSession?.user) {
+        const meta = sbSession.user.user_metadata ?? {};
+        setSession({
+          id: sbSession.user.id,
+          name: meta.name ?? sbSession.user.email ?? "",
+          email: sbSession.user.email ?? "",
+          avatar: meta.avatar ?? "",
+          type: meta.type ?? "Privat",
+          location: meta.location ?? "",
+          verified: !!sbSession.user.email_confirmed_at,
+        });
+        setSessionLoading(false);
+      } else {
+        // Supabase has no session – fall back to JWT /api/auth/me
+        refreshSession();
+      }
+    });
+
+    // Also do initial check via JWT fallback
     refreshSession();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [refreshSession]);
 
   const toggleSaved = useCallback(async (id: string) => {
@@ -235,6 +261,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
+    // Sign out from both Supabase and JWT session
+    try { await supabase.auth.signOut(); } catch { /* ignore if Supabase unreachable */ }
     await fetch("/api/auth/logout", { method: "POST" });
     setSession(null);
     setSavedIds(new Set());

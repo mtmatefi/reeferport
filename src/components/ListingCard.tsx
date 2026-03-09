@@ -1,13 +1,17 @@
 "use client";
 import Link from "next/link";
 import { useStore } from "@/lib/store";
-import { type Listing } from "@/lib/data";
+import { type Listing, OFFER_TYPE_LABELS } from "@/lib/data";
 
 interface Props { listing: Listing; rank?: number; }
 
 export default function ListingCard({ listing, rank }: Props) {
   const { isSaved, toggleSaved } = useStore();
   const saved = isSaved(listing.id);
+
+  const isGift = listing.offerType === "gift";
+  const isTrade = listing.offerType === "trade";
+  const showPrice = !isGift && !isTrade;
 
   return (
     <article className="group relative border-b border-[rgba(45,200,190,0.08)] py-5 last:border-0">
@@ -58,12 +62,32 @@ export default function ListingCard({ listing, rank }: Props) {
             <span className="rounded-full border border-white/8 bg-white/4 px-2 py-0.5 text-[10px] text-white/40">
               {listing.category}
             </span>
+            {listing.subcategory && (
+              <span className="rounded-full border border-white/8 bg-white/4 px-2 py-0.5 text-[10px] text-white/40">
+                {listing.subcategory}
+              </span>
+            )}
             {listing.listingType === "B2C" && (
               <span className="tag-coral">Händler</span>
             )}
             <span className="rounded-full border border-white/8 bg-white/4 px-2 py-0.5 text-[10px] text-white/40">
               {listing.condition}
             </span>
+            {isGift && (
+              <span className="rounded-full border border-green-500/25 bg-green-500/10 px-2 py-0.5 text-[10px] font-medium text-green-400">
+                Gratis
+              </span>
+            )}
+            {isTrade && (
+              <span className="rounded-full border border-amber-500/25 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-400">
+                Tausch
+              </span>
+            )}
+            {listing.citesRequired && (
+              <span className="rounded-full border border-purple-500/25 bg-purple-500/10 px-2 py-0.5 text-[10px] font-medium text-purple-400">
+                CITES
+              </span>
+            )}
           </div>
 
           {/* Title */}
@@ -82,9 +106,15 @@ export default function ListingCard({ listing, rank }: Props) {
           {/* Footer: price + "Ansehen" */}
           <div className="mt-3 flex items-end justify-between gap-3">
             <div>
-              <p className="text-[16px] font-semibold tracking-[-0.03em] text-white/96">
-                {listing.currency} {listing.price.toLocaleString("de-CH")}
-              </p>
+              {showPrice ? (
+                <p className="text-[16px] font-semibold tracking-[-0.03em] text-white/96">
+                  {listing.currency} {listing.price.toLocaleString("de-CH")}
+                </p>
+              ) : (
+                <p className="text-[16px] font-semibold tracking-[-0.03em] text-white/96">
+                  {OFFER_TYPE_LABELS[listing.offerType]}
+                </p>
+              )}
               <p className="text-[11px] text-white/30">
                 {listing.location} · {listing.postedAt}
               </p>
