@@ -5,9 +5,33 @@ import Sidebar from "@/components/Sidebar";
 import { StoreProvider } from "@/lib/store";
 
 export const metadata: Metadata = {
-  title: "ReefPort – Meerwasser Marktplatz Schweiz",
-  description: "Kaufe und verkaufe Meerwasserkorallen, Fische und Equipment in der Schweiz.",
+  metadataBase: new URL("https://reefport.ch"),
+  title: {
+    default: "ReefPort – Meerwasser Marktplatz Schweiz",
+    template: "%s | ReefPort",
+  },
+  description:
+    "Der führende Schweizer Marktplatz für Meerwasseraquaristik. Kaufe und verkaufe Korallen (LPS, SPS, Zoanthus), Meerwasserfische, Wirbellose und Aquarium-Equipment. B2C & C2C · Versand CH.",
+  keywords: [
+    "Meerwasser Marktplatz Schweiz", "Korallen kaufen Schweiz", "Korallen verkaufen",
+    "LPS Korallen", "SPS Korallen", "Zoanthus", "Meerwasserfische", "Aquarium Equipment",
+    "Clownfisch", "Acropora", "Euphyllia", "Tridacna", "Frag", "Nachzucht",
+  ],
+  authors: [{ name: "ReefPort" }],
+  creator: "ReefPort",
+  openGraph: {
+    type: "website",
+    locale: "de_CH",
+    url: "https://reefport.ch",
+    siteName: "ReefPort",
+    title: "ReefPort – Meerwasser Marktplatz Schweiz",
+    description: "Kaufe & verkaufe Korallen, Fische und Equipment · B2C & C2C · Versand CH.",
+  },
+  twitter: { card: "summary_large_image", site: "@reefport_ch" },
+  robots: { index: true, follow: true },
+  alternates: { canonical: "https://reefport.ch" },
 };
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
