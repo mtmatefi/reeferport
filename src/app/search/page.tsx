@@ -1,9 +1,8 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { listings, categories, type Category } from "@/lib/data";
-import { useStore } from "@/lib/store";
+import { listings, type Category } from "@/lib/data";
+import ListingCard from "@/components/ListingCard";
 import { Suspense } from "react";
 
 const SORTS = ["Neueste", "Preis ↑", "Preis ↓", "Beliebteste"] as const;
@@ -18,7 +17,6 @@ function SearchContent() {
   const [maxP, setMaxP] = useState("");
   const [type, setType] = useState<"Alle" | "B2C" | "C2C">("Alle");
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const { isSaved, toggleSaved } = useStore();
 
   const catList: Category[] = ["Korallen", "Fische", "Wirbellose", "Equipment", "Frags"];
   const toggleCat = (c: Category) => setCats((p) => { const n = new Set(p); n.has(c) ? n.delete(c) : n.add(c); return n; });
@@ -139,34 +137,7 @@ function SearchContent() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 md:gap-x-6 stagger">
             {results.map((item, i) => (
-              <article key={item.id} className="group border-b border-white/6 py-5 last:border-0">
-                <Link href={`/listing/${item.id}`} className="flex gap-4">
-                  <div className="relative h-[118px] w-[88px] shrink-0 overflow-hidden bg-[#060D13]">
-                    <img src={item.image} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-1.5 flex flex-wrap gap-1.5">
-                      <span className="rounded-full border border-white/8 bg-white/4 px-2 py-0.5 text-[10px] text-white/38">{item.category}</span>
-                      {item.listingType === "B2C" && <span className="rounded-full border border-[rgba(96,165,250,0.22)] bg-[rgba(96,165,250,0.10)] px-2 py-0.5 text-[10px] text-[#93C5FD]">Händler</span>}
-                    </div>
-                    <h4 className="truncate text-[17px] font-semibold tracking-[-0.035em] text-white/95">{item.title}</h4>
-                    {item.latin && <p className="mt-0.5 truncate text-[12px] italic text-white/34">{item.latin}</p>}
-                    <p className="mt-2 line-clamp-2 text-[13px] leading-[1.5] text-white/46">{item.subtitle}</p>
-                    <div className="mt-3 flex items-end justify-between">
-                      <div>
-                        <p className="text-[16px] font-semibold tracking-[-0.03em]">{item.currency} {item.price.toLocaleString("de-CH")}</p>
-                        <p className="text-[11px] text-white/30">{item.location} · {item.postedAt}</p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <button onClick={() => toggleSaved(item.id)} className="float-right -mt-[38px] p-1.5" aria-label="Merken" style={{ position: "relative", float: "right", marginTop: "-38px" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill={isSaved(item.id) ? "white" : "none"} stroke={isSaved(item.id) ? "white" : "rgba(255,255,255,0.26)"} strokeWidth="1.7">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </article>
+              <ListingCard key={item.id} listing={item} rank={i + 1} />
             ))}
           </div>
         )}
