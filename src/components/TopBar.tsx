@@ -9,7 +9,7 @@ const NAV = [
   { label: "Entdecken",   href: "/",        icon: "M3 12L12 3L21 12V21H15V15H9V21H3V12Z" },
   { label: "Suche",       href: "/search",  icon: "M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" },
   { label: "Nachrichten", href: "/inbox",   icon: "M8 12H8.01M12 12H12.01M16 12H16.01M21 12C21 16.4183 16.9706 20 12 20C10.4607 20 9.01172 19.6565 7.74467 19.0511L3 20L4.39499 16.28C3.51156 15.0423 3 13.5743 3 12C3 7.58172 7.02944 4 12 4C16.9706 4 21 7.58172 21 12Z" },
-  { label: "ReefAlliance", href: "/shop/s6", icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5", official: true },
+  { label: "Händler",      href: "/search",  icon: "M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82zM7 7h.01" },
   { label: "Profil",      href: "/profile", icon: "M20 21V19a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" },
 ];
 
@@ -74,7 +74,6 @@ export default function TopBar() {
           {NAV.map((item) => {
             const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             const isInbox = item.href === "/inbox";
-            const isOfficial = item.official;
 
             return (
               <Link
@@ -83,11 +82,7 @@ export default function TopBar() {
                 className={[
                   "relative flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[13px] font-medium transition-all duration-150",
                   active
-                    ? isOfficial
-                      ? "bg-[rgba(45,212,191,0.12)] text-[#5EEAD4]"
-                      : "bg-[rgba(232,114,74,0.12)] text-[#FF9972]"
-                    : isOfficial
-                    ? "text-[#5EEAD4]/55 hover:bg-[rgba(45,212,191,0.07)] hover:text-[#5EEAD4]/80"
+                    ? "bg-[rgba(232,114,74,0.12)] text-[#FF9972]"
                     : "text-white/45 hover:text-white/75 hover:bg-[rgba(45,200,190,0.07)]",
                 ].join(" ")}
               >
@@ -95,11 +90,6 @@ export default function TopBar() {
                   <path d={item.icon} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 <span>{item.label}</span>
-                {isOfficial && (
-                  <span className="rounded-full border border-[rgba(45,212,191,0.22)] bg-[rgba(45,212,191,0.08)] px-1 py-px text-[8px] font-semibold uppercase tracking-[0.12em] text-[#5EEAD4]/70">
-                    Shop
-                  </span>
-                )}
                 {isInbox && totalUnread > 0 && (
                   <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#E8724A] px-1 text-[9px] font-semibold text-white">
                     {totalUnread}
