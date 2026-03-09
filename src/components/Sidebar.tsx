@@ -4,10 +4,11 @@ import { usePathname } from "next/navigation";
 import { useStore } from "@/lib/store";
 
 const nav = [
-  { label: "Entdecken",    href: "/",        icon: "M3 12L12 3L21 12V21H15V15H9V21H3V12Z" },
-  { label: "Suche",        href: "/search",  icon: "M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" },
-  { label: "Nachrichten",  href: "/inbox",   icon: "M8 12H8.01M12 12H12.01M16 12H16.01M21 12C21 16.4183 16.9706 20 12 20C10.4607 20 9.01172 19.6565 7.74467 19.0511L3 20L4.39499 16.28C3.51156 15.0423 3 13.5743 3 12C3 7.58172 7.02944 4 12 4C16.9706 4 21 7.58172 21 12Z" },
-  { label: "Profil",       href: "/profile", icon: "M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" },
+  { label: "Entdecken",    href: "/",         icon: "M3 12L12 3L21 12V21H15V15H9V21H3V12Z" },
+  { label: "Suche",        href: "/search",   icon: "M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" },
+  { label: "Nachrichten",  href: "/inbox",    icon: "M8 12H8.01M12 12H12.01M16 12H16.01M21 12C21 16.4183 16.9706 20 12 20C10.4607 20 9.01172 19.6565 7.74467 19.0511L3 20L4.39499 16.28C3.51156 15.0423 3 13.5743 3 12C3 7.58172 7.02944 4 12 4C16.9706 4 21 7.58172 21 12Z" },
+  { label: "ReefAlliance", href: "/shop/s6",  icon: "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2zM9 22V12h6v10", official: true },
+  { label: "Profil",       href: "/profile",  icon: "M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" },
 ];
 
 export default function Sidebar() {
@@ -35,6 +36,7 @@ export default function Sidebar() {
         {nav.map((item) => {
           const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           const isInbox = item.href === "/inbox";
+          const isOfficial = (item as { official?: boolean }).official;
           return (
             <Link
               key={item.label}
@@ -42,17 +44,22 @@ export default function Sidebar() {
               className={[
                 "relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-150",
                 active
-                  ? "bg-white/9 text-white"
-                  : "text-white/44 hover:text-white/78 hover:bg-white/5",
+                  ? isOfficial ? "bg-[rgba(45,212,191,0.10)] text-[#5EEAD4]" : "bg-white/9 text-white"
+                  : isOfficial ? "text-[#5EEAD4]/60 hover:bg-[rgba(45,212,191,0.07)] hover:text-[#5EEAD4]/90" : "text-white/44 hover:text-white/78 hover:bg-white/5",
               ].join(" ")}
             >
               {active && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-white/70" />
+                <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full ${isOfficial ? "bg-[#2DD4BF]" : "bg-white/70"}`} />
               )}
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0">
                 <path d={item.icon} stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <span>{item.label}</span>
+              {isOfficial && !active && (
+                <span className="ml-auto rounded-full border border-[rgba(45,212,191,0.22)] bg-[rgba(45,212,191,0.08)] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#5EEAD4]/70">
+                  Shop
+                </span>
+              )}
               {isInbox && totalUnread > 0 && (
                 <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-[#60A5FA] px-1.5 text-[10px] font-semibold text-black">
                   {totalUnread}

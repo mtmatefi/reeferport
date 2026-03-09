@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import HeroCard from "@/components/HeroCard";
 import ListingCard from "@/components/ListingCard";
-import { listings, categories, type Category } from "@/lib/data";
+import { listings, sellers, categories, type Category } from "@/lib/data";
 
 const tabs = ["Discover", "Drops", "Collectors"] as const;
 type Tab = (typeof tabs)[number];
@@ -80,12 +80,12 @@ export default function HomePage() {
 
             {/* Right panel */}
             <div className="mt-5 lg:mt-0 flex flex-col gap-4">
-              {/* Stats */}
+              {/* Stats – dynamic */}
               <div className="grid grid-cols-3 border border-white/7 divide-x divide-white/7">
                 {[
-                  { n: "284", label: "Inserate" },
-                  { n: "63",  label: "Verkäufer" },
-                  { n: "8",   label: "Kantone" },
+                  { n: listings.length.toString(), label: "Inserate" },
+                  { n: sellers.length.toString(),  label: "Verkäufer" },
+                  { n: "8",                         label: "Kantone" },
                 ].map((s) => (
                   <div key={s.label} className="py-4 text-center">
                     <p className="text-[22px] font-semibold tracking-[-0.04em]">{s.n}</p>
@@ -109,18 +109,22 @@ export default function HomePage() {
 
               {/* Seller spotlight */}
               <div className="hidden lg:block border border-white/7 p-4">
-                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/26">Top Seller</p>
+                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/26">Top Shops</p>
                 {[
-                  { name: "CoralHaus Luzern", sub: "Händler · ★ 4.9", img: "https://i.pravatar.cc/150?img=3" },
-                  { name: "ReefLab Zürich",   sub: "Händler · ★ 5.0", img: "https://i.pravatar.cc/150?img=7" },
+                  { id: "s6", name: "ReefAlliance Shop",  sub: "Official · ★ 4.9", img: "https://i.pravatar.cc/150?img=33", official: true },
+                  { id: "s1", name: "CoralHaus Luzern",   sub: "Händler · ★ 4.9",  img: "https://i.pravatar.cc/150?img=3",  official: false },
+                  { id: "s3", name: "ReefLab Zürich",     sub: "Händler · ★ 5.0",  img: "https://i.pravatar.cc/150?img=7",  official: false },
                 ].map((s) => (
                   <div key={s.name} className="flex items-center gap-3 py-2.5 border-b border-white/6 last:border-0">
-                    <img src={s.img} alt={s.name} className="h-8 w-8 rounded-full object-cover" />
+                    <div className="relative">
+                      <img src={s.img} alt={s.name} className="h-8 w-8 rounded-full object-cover" />
+                      {s.official && <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full bg-[#2DD4BF] ring-2 ring-[#03070A]" />}
+                    </div>
                     <div>
                       <p className="text-[13px] font-medium text-white/84">{s.name}</p>
                       <p className="text-[11px] text-white/36">{s.sub}</p>
                     </div>
-                    <Link href="/profile" className="ml-auto text-[12px] text-white/36 hover:text-white/60 transition">Profil →</Link>
+                    <Link href={`/shop/${s.id}`} className="ml-auto text-[12px] text-white/36 hover:text-white/60 transition">Shop →</Link>
                   </div>
                 ))}
               </div>
