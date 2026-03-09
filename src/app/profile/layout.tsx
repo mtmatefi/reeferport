@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mein Profil | ReefPort",
-  description: "Verwalte deine Inserate, gespeicherten Artikel und Bewertungen auf ReefPort.",
+  title: "Mein Profil | Gesellschaftsbecken",
+  description: "Verwalte deine Inserate, gespeicherten Artikel und Bewertungen auf Gesellschaftsbecken.",
   robots: { index: false, follow: false },
 };
 

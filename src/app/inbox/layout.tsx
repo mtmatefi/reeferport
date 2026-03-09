@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Nachrichten | ReefPort",
-  description: "Deine Konversationen mit Käufern und Verkäufern auf ReefPort.",
+  title: "Nachrichten | Gesellschaftsbecken",
+  description: "Deine Konversationen mit Käufern und Verkäufern auf Gesellschaftsbecken.",
   robots: { index: false, follow: false },
 };
 
