@@ -1,6 +1,7 @@
 "use client";
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 interface AuthModalProps {
   onClose: () => void;
@@ -33,28 +34,102 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
     setLoading(true);
     setError("");
 
-    const url = tab === "login" ? "/api/auth/login" : "/api/auth/register";
-    const body = tab === "login"
-      ? { email: form.email, password: form.password }
-      : { name: form.name, email: form.email, password: form.password, location: form.location, type: form.type };
+    try {
+      if (tab === "register") {
+        // Try Supabase Auth first
+        try {
+          const { data: sbData, error: sbError } = await supabase.auth.signUp({
+            email: form.email,
+            password: form.password,
+            options: {
+              data: { name: form.name, location: form.location, type: form.type },
+            },
+          });
+          if (!sbError && sbData.user) {
+            const user = {
+              id: sbData.user.id,
+              name: form.name,
+              email: form.email,
+              avatar: "",
+            };
+            setLoading(false);
+            onSuccess?.(user);
+            onClose();
+            router.refresh();
+            return;
+          }
+          // If Supabase error, fall through to JWT fallback
+        } catch {
+          // Supabase unreachable, fall through to JWT fallback
+        }
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+        // Fallback: existing JWT register endpoint
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            password: form.password,
+            location: form.location,
+            type: form.type,
+          }),
+        });
+        const data = await res.json();
+        setLoading(false);
+        if (!res.ok) {
+          setError(data.error || "Fehler beim Registrieren.");
+          return;
+        }
+        onSuccess?.(data.user);
+        onClose();
+        router.refresh();
+      } else {
+        // Login: Try Supabase Auth first
+        try {
+          const { data: sbData, error: sbError } = await supabase.auth.signInWithPassword({
+            email: form.email,
+            password: form.password,
+          });
+          if (!sbError && sbData.user) {
+            const meta = sbData.user.user_metadata ?? {};
+            const user = {
+              id: sbData.user.id,
+              name: meta.name ?? form.email,
+              email: form.email,
+              avatar: meta.avatar ?? "",
+            };
+            setLoading(false);
+            onSuccess?.(user);
+            onClose();
+            router.refresh();
+            return;
+          }
+          // If Supabase error, fall through to JWT fallback
+        } catch {
+          // Supabase unreachable, fall through to JWT fallback
+        }
 
-    const data = await res.json();
-    setLoading(false);
-
-    if (!res.ok) {
-      setError(data.error || "Fehler beim Anmelden.");
-      return;
+        // Fallback: existing JWT login endpoint
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: form.email, password: form.password }),
+        });
+        const data = await res.json();
+        setLoading(false);
+        if (!res.ok) {
+          setError(data.error || "Fehler beim Anmelden.");
+          return;
+        }
+        onSuccess?.(data.user);
+        onClose();
+        router.refresh();
+      }
+    } catch {
+      setLoading(false);
+      setError("Netzwerkfehler. Bitte versuche es erneut.");
     }
-
-    onSuccess?.(data.user);
-    onClose();
-    router.refresh();
   }
 
   return (

@@ -2,7 +2,7 @@
 import { use, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { listings } from "@/lib/data";
+import { listings, OFFER_TYPE_LABELS, CITES_INFO } from "@/lib/data";
 import { useStore } from "@/lib/store";
 import { notFound } from "next/navigation";
 
@@ -107,9 +107,21 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
           {/* Badges */}
           <div className="mt-5 mb-3 flex flex-wrap gap-2">
             <span className="rounded-full border border-[rgba(45,200,190,0.12)] bg-[rgba(45,200,190,0.05)] px-2.5 py-1 text-[11px] text-white/46">{listing.category}</span>
+            {listing.subcategory && (
+              <span className="rounded-full border border-[rgba(45,200,190,0.12)] bg-[rgba(45,200,190,0.05)] px-2.5 py-1 text-[11px] text-white/46">{listing.subcategory}</span>
+            )}
             <span className="rounded-full border border-[rgba(45,200,190,0.12)] bg-[rgba(45,200,190,0.05)] px-2.5 py-1 text-[11px] text-white/46">{listing.condition}</span>
             {listing.listingType === "B2C" && (
               <span className="tag-coral">Händler</span>
+            )}
+            {listing.offerType === "gift" && (
+              <span className="rounded-full border border-green-500/25 bg-green-500/10 px-2.5 py-1 text-[11px] font-medium text-green-400">Gratis</span>
+            )}
+            {listing.offerType === "trade" && (
+              <span className="rounded-full border border-amber-500/25 bg-amber-500/10 px-2.5 py-1 text-[11px] font-medium text-amber-400">Tausch</span>
+            )}
+            {listing.citesRequired && (
+              <span className="rounded-full border border-purple-500/25 bg-purple-500/10 px-2.5 py-1 text-[11px] font-medium text-purple-400">CITES</span>
             )}
             {listing.badge && (
               <span className="rounded-full border border-[rgba(45,200,190,0.14)] bg-[rgba(45,200,190,0.06)] px-2.5 py-1 text-[11px] font-medium text-white/58">{listing.badge}</span>
@@ -123,10 +135,16 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
               {listing.latin && <p className="mt-1.5 text-[13px] italic text-white/40">{listing.latin}</p>}
             </div>
             <div className="shrink-0 text-right">
-              <p className="text-[26px] font-semibold tracking-[-0.045em]">
-                {listing.currency} {listing.price.toLocaleString("de-CH")}
-              </p>
-              {listing.shipping && listing.shippingCost && (
+              {listing.offerType === "gift" ? (
+                <p className="text-[26px] font-semibold tracking-[-0.045em] text-green-400">Verschenken</p>
+              ) : listing.offerType === "trade" ? (
+                <p className="text-[26px] font-semibold tracking-[-0.045em] text-amber-400">Tauschen</p>
+              ) : (
+                <p className="text-[26px] font-semibold tracking-[-0.045em]">
+                  {listing.currency} {listing.price.toLocaleString("de-CH")}
+                </p>
+              )}
+              {listing.offerType === "sell" && listing.shipping && listing.shippingCost && (
                 <p className="text-[12px] text-white/34">+ {listing.currency} {listing.shippingCost} Versand</p>
               )}
             </div>
@@ -202,6 +220,79 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
               )}
             </div>
           </div>
+
+          {/* CITES Information */}
+          {listing.citesRequired && (
+            <div className="mt-6 border-t border-white/7 pt-5">
+              <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/30">CITES / Artenschutz</h2>
+              <div className="rounded-lg border border-purple-500/15 bg-purple-500/5 p-4 space-y-2">
+                {listing.citesAppendix && (
+                  <div className="flex items-center gap-2 text-[13px]">
+                    <span className="text-white/40">Anhang:</span>
+                    <span className="font-medium text-purple-300">
+                      {CITES_INFO.appendices.find((a) => a.value === listing.citesAppendix)?.label ?? `Anhang ${listing.citesAppendix}`}
+                    </span>
+                  </div>
+                )}
+                {listing.citesSource && (
+                  <div className="flex items-center gap-2 text-[13px]">
+                    <span className="text-white/40">Herkunft:</span>
+                    <span className="font-medium text-purple-300">
+                      {CITES_INFO.sources.find((s) => s.value === listing.citesSource)?.label ?? listing.citesSource}
+                    </span>
+                  </div>
+                )}
+                {listing.citesNumber && (
+                  <div className="flex items-center gap-2 text-[13px]">
+                    <span className="text-white/40">CITES-Nr.:</span>
+                    <span className="font-mono text-[12px] text-purple-300">{listing.citesNumber}</span>
+                  </div>
+                )}
+                <p className="mt-2 text-[11px] leading-relaxed text-white/30">
+                  {CITES_INFO.info}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Equipment Specs */}
+          {listing.category === "Equipment" && (listing.equipmentType || listing.brand || listing.wattage || listing.tankSizeMin || listing.tankSizeMax) && (
+            <div className="mt-6 border-t border-white/7 pt-5">
+              <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/30">Technische Daten</h2>
+              <div className="grid grid-cols-2 gap-3">
+                {listing.equipmentType && (
+                  <div className="border border-[rgba(45,200,190,0.08)] p-3 rounded-lg">
+                    <p className="text-[10px] text-white/32 mb-0.5">Typ</p>
+                    <p className="text-[13px] font-medium text-white/70">{listing.equipmentType}</p>
+                  </div>
+                )}
+                {listing.brand && (
+                  <div className="border border-[rgba(45,200,190,0.08)] p-3 rounded-lg">
+                    <p className="text-[10px] text-white/32 mb-0.5">Marke</p>
+                    <p className="text-[13px] font-medium text-white/70">{listing.brand}</p>
+                  </div>
+                )}
+                {listing.wattage && (
+                  <div className="border border-[rgba(45,200,190,0.08)] p-3 rounded-lg">
+                    <p className="text-[10px] text-white/32 mb-0.5">Leistung</p>
+                    <p className="text-[13px] font-medium text-white/70">{listing.wattage}W</p>
+                  </div>
+                )}
+                {(listing.tankSizeMin || listing.tankSizeMax) && (
+                  <div className="border border-[rgba(45,200,190,0.08)] p-3 rounded-lg">
+                    <p className="text-[10px] text-white/32 mb-0.5">Beckengrösse</p>
+                    <p className="text-[13px] font-medium text-white/70">
+                      {listing.tankSizeMin && listing.tankSizeMax
+                        ? `${listing.tankSizeMin}–${listing.tankSizeMax}L`
+                        : listing.tankSizeMax
+                          ? `bis ${listing.tankSizeMax}L`
+                          : `ab ${listing.tankSizeMin}L`}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Seller */}
           <div className="mt-6 border-t border-white/7 pt-5">
