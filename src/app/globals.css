@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background: #03070A;
+  color: rgba(255,255,255,0.96);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.fade-in-up { animation: fadeInUp 0.38s ease forwards; }
+.pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+.stagger > *:nth-child(1) { animation: fadeInUp 0.35s 0.04s ease both; }
+.stagger > *:nth-child(2) { animation: fadeInUp 0.35s 0.09s ease both; }
+.stagger > *:nth-child(3) { animation: fadeInUp 0.35s 0.14s ease both; }
+.stagger > *:nth-child(4) { animation: fadeInUp 0.35s 0.19s ease both; }
+.stagger > *:nth-child(5) { animation: fadeInUp 0.35s 0.24s ease both; }
+.stagger > *:nth-child(6) { animation: fadeInUp 0.35s 0.29s ease both; }
