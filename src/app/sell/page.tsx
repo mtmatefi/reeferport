@@ -33,9 +33,9 @@ export default function SellPage() {
   const progress = ((step + 1) / steps.length) * 100;
 
   return (
-    <div className="pb-32">
+    <div className="pb-32 md:pb-10">
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-white/8 bg-[rgba(3,7,10,0.94)] px-5 pb-4 pt-6 backdrop-blur-xl">
+      <div className="sticky top-0 z-10 border-b border-white/8 bg-[rgba(3,7,10,0.94)] px-4 sm:px-6 lg:px-8 pb-4 pt-6 backdrop-blur-xl">
         <div className="mb-4 flex items-center gap-3">
           <Link href="/" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -74,7 +74,7 @@ export default function SellPage() {
         </div>
       </div>
 
-      <div className="px-5 pt-6">
+      <div className="px-4 sm:px-6 lg:px-8 pt-6 max-w-2xl">
         {/* Step 0: Category */}
         {step === 0 && (
           <div className="fade-in-up">
@@ -328,8 +328,8 @@ export default function SellPage() {
       </div>
 
       {/* Sticky footer */}
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/8 bg-[rgba(3,7,10,0.95)] px-5 py-4 pb-8 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-sm gap-3">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/8 bg-[rgba(3,7,10,0.95)] px-4 sm:px-6 py-4 pb-8 md:pb-4 backdrop-blur-xl md:left-[240px]">
+        <div className="mx-auto flex max-w-2xl gap-3">
           {step > 0 && (
             <button
               onClick={() => setStep((s) => s - 1)}

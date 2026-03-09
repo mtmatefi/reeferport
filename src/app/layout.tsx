@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
+import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
   title: "ReefPort – Meerwasser Marktplatz Schweiz",
@@ -22,25 +23,35 @@ export default function RootLayout({
   return (
     <html lang="de">
       <body className="bg-[#03070A] text-white antialiased">
-        <div className="relative mx-auto min-h-screen max-w-sm overflow-hidden bg-[#03070A]">
-          {/* Ambient background gradients */}
-          <div
-            className="pointer-events-none fixed inset-0 z-0"
-            style={{
-              background: [
-                "radial-gradient(circle at 50% -10%, rgba(96,165,250,0.18) 0%, transparent 34%)",
-                "radial-gradient(circle at 85% 20%, rgba(20,184,166,0.10) 0%, transparent 30%)",
-                "radial-gradient(circle at 10% 75%, rgba(59,130,246,0.08) 0%, transparent 28%)",
-              ].join(","),
-            }}
-          />
+        {/* Ambient background */}
+        <div
+          className="pointer-events-none fixed inset-0 z-0"
+          style={{
+            background: [
+              "radial-gradient(circle at 50% -10%, rgba(96,165,250,0.16) 0%, transparent 40%)",
+              "radial-gradient(circle at 85% 20%, rgba(20,184,166,0.09) 0%, transparent 35%)",
+              "radial-gradient(circle at 10% 75%, rgba(59,130,246,0.07) 0%, transparent 30%)",
+            ].join(","),
+          }}
+        />
 
-          {/* Page content */}
-          <div className="relative z-10 min-h-screen">
+        {/* Sidebar – md+ */}
+        <Sidebar />
+
+        {/*
+          Layout:
+          - mobile:  full width, no left offset
+          - md+:     offset by sidebar width (240px)
+          - content is centered with max-w on desktop
+        */}
+        <div className="relative z-10 md:pl-[240px]">
+          <main className="mx-auto min-h-screen w-full max-w-5xl pb-20 md:pb-0">
             {children}
-          </div>
+          </main>
+        </div>
 
-          {/* Global bottom nav */}
+        {/* Bottom nav – mobile only */}
+        <div className="md:hidden">
           <BottomNav />
         </div>
       </body>
