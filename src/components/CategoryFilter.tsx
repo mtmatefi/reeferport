@@ -1,6 +1,5 @@
 "use client";
-import { type Category } from "@/lib/data";
-import { categories } from "@/lib/data";
+import { type Category, categories } from "@/lib/data";
 
 interface Props {
   active: Category | "Alle";
@@ -9,29 +8,25 @@ interface Props {
 
 export default function CategoryFilter({ active, onChange }: Props) {
   return (
-    <div className="mb-6 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-      {categories.map((cat) => {
-        const isActive = cat.label === active;
+    <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+      {categories.map((c) => {
+        const isActive = c.label === active;
         return (
           <button
-            key={cat.label}
-            onClick={() => onChange(cat.label)}
+            key={c.label}
+            onClick={() => onChange(c.label)}
             className={[
-              "flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-medium transition-all duration-200",
+              "flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-medium transition-all duration-200 active:scale-95",
               isActive
-                ? "border-white/30 bg-white/10 text-white"
-                : "border-white/8 bg-white/4 text-white/44 hover:border-white/16 hover:text-white/70",
+                ? "border-white/28 bg-white/9 text-white"
+                : "border-white/7 text-white/40 hover:border-white/16 hover:text-white/70",
             ].join(" ")}
           >
-            <span className="text-[14px] leading-none">{cat.icon}</span>
-            <span>{cat.label}</span>
-            {cat.count > 0 && (
-              <span
-                className={`rounded-full px-1.5 py-0.5 text-[10px] ${
-                  isActive ? "bg-white/20 text-white" : "bg-white/6 text-white/36"
-                }`}
-              >
-                {cat.count}
+            <span className="text-[13px] leading-none">{c.icon}</span>
+            <span>{c.label}</span>
+            {c.count > 0 && (
+              <span className={`text-[10px] tabular-nums ${isActive ? "text-white/55" : "text-white/24"}`}>
+                {c.count}
               </span>
             )}
           </button>
