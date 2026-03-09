@@ -36,8 +36,8 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
 
   return (
     <div>
-      {/* Top bar */}
-      <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-white/7 glass px-4 sm:px-6 lg:px-8 py-3">
+      {/* Top bar – sits below the global TopBar */}
+      <div className="sticky top-12 z-20 flex items-center gap-3 border-b border-white/7 glass px-4 sm:px-6 lg:px-8 py-3">
         <Link href="/" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 transition hover:border-white/22">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
             <path d="M15 18L9 12L15 6" stroke="rgba(255,255,255,0.65)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -70,8 +70,8 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
       {/* Two-column on lg */}
       <div className="lg:grid lg:grid-cols-[1fr_420px] xl:grid-cols-[1fr_460px]">
 
-        {/* ── Left: Images ────────────────────────────────── */}
-        <div className="lg:border-r lg:border-white/7">
+        {/* ── Left: Images – sticky on desktop ────────────── */}
+        <div className="lg:sticky lg:top-[96px] lg:self-start lg:border-r lg:border-white/7">
           {/* Main image */}
           <div className="relative bg-[#060D13] overflow-hidden cursor-zoom-in"
             onClick={() => { if (listing.images.length > 1) setImgIdx((i) => (i + 1) % listing.images.length); }}>
@@ -103,7 +103,7 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
         </div>
 
         {/* ── Right: Details ───────────────────────────────── */}
-        <div className="px-4 sm:px-6 lg:px-8 lg:overflow-y-auto lg:max-h-[calc(100vh-52px)] pb-32 lg:pb-6">
+        <div className="px-4 sm:px-6 lg:px-8 pb-32 lg:pb-8">
           {/* Badges */}
           <div className="mt-5 mb-3 flex flex-wrap gap-2">
             <span className="rounded-full border border-white/8 bg-white/4 px-2.5 py-1 text-[11px] text-white/46">{listing.category}</span>

@@ -1,14 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
-import Sidebar from "@/components/Sidebar";
+import TopBar from "@/components/TopBar";
 import { StoreProvider } from "@/lib/store";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://reefport.ch"),
+  metadataBase: new URL("https://gesellschaftsbecken.ch"),
   title: {
-    default: "ReefPort – Meerwasser Marktplatz Schweiz",
-    template: "%s | ReefPort",
+    default: "Gesellschaftsbecken – Meerwasser Marktplatz Schweiz",
+    template: "%s | Gesellschaftsbecken",
   },
   description:
     "Der führende Schweizer Marktplatz für Meerwasseraquaristik. Kaufe und verkaufe Korallen (LPS, SPS, Zoanthus), Meerwasserfische, Wirbellose und Aquarium-Equipment. B2C & C2C · Versand CH.",
@@ -17,19 +17,19 @@ export const metadata: Metadata = {
     "LPS Korallen", "SPS Korallen", "Zoanthus", "Meerwasserfische", "Aquarium Equipment",
     "Clownfisch", "Acropora", "Euphyllia", "Tridacna", "Frag", "Nachzucht",
   ],
-  authors: [{ name: "ReefPort" }],
-  creator: "ReefPort",
+  authors: [{ name: "Gesellschaftsbecken" }],
+  creator: "Gesellschaftsbecken",
   openGraph: {
     type: "website",
     locale: "de_CH",
-    url: "https://reefport.ch",
-    siteName: "ReefPort",
-    title: "ReefPort – Meerwasser Marktplatz Schweiz",
+    url: "https://gesellschaftsbecken.ch",
+    siteName: "Gesellschaftsbecken",
+    title: "Gesellschaftsbecken – Meerwasser Marktplatz Schweiz",
     description: "Kaufe & verkaufe Korallen, Fische und Equipment · B2C & C2C · Versand CH.",
   },
-  twitter: { card: "summary_large_image", site: "@reefport_ch" },
+  twitter: { card: "summary_large_image", site: "@gesellschaftsbecken" },
   robots: { index: true, follow: true },
-  alternates: { canonical: "https://reefport.ch" },
+  alternates: { canonical: "https://gesellschaftsbecken.ch" },
 };
 
 export const viewport: Viewport = {
@@ -55,12 +55,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }}
           />
 
-          {/* Sidebar – tablet & desktop */}
-          <Sidebar />
+          {/* Top bar – all screen sizes */}
+          <TopBar />
 
           {/* Main content area */}
-          <div className="relative z-10 md:pl-[248px]">
-            <main className="mx-auto min-h-screen w-full max-w-6xl pb-[72px] md:pb-6">
+          <div className="relative z-10">
+            <main className="mx-auto min-h-screen w-full max-w-6xl pt-20 pb-[72px] md:pb-6 px-0">
               {children}
             </main>
           </div>

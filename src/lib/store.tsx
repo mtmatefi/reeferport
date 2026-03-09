@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 
 export interface Message {
   id: string;
@@ -18,16 +18,31 @@ export interface Conversation {
   messages: Message[];
 }
 
+export interface SessionUser {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  type: string;
+  location: string;
+  verified: boolean;
+}
+
 interface StoreState {
   savedIds: Set<string>;
   toggleSaved: (id: string) => void;
   isSaved: (id: string) => boolean;
   conversations: Conversation[];
   sendMessage: (convId: string, text: string) => void;
-  startConversation: (listingId: string, listingTitle: string, sellerName: string, sellerAvatar: string) => string;
+  startConversation: (listingId: string, listingTitle: string, sellerName: string, sellerAvatar: string, sellerId?: string, message?: string) => Promise<string>;
   markRead: (convId: string) => void;
   totalUnread: number;
   notifications: number;
+  // Auth
+  session: SessionUser | null;
+  sessionLoading: boolean;
+  refreshSession: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const StoreCtx = createContext<StoreState | null>(null);
@@ -75,29 +90,61 @@ const INITIAL_CONVS: Conversation[] = [
       { id: "m7", from: "other", text: "Ja, wir haben noch 2 Frags. Bitte um kurze Voranmeldung.", time: "Mo" },
     ],
   },
-  {
-    id: "c4",
-    name: "ReefLab Zürich",
-    avatar: "https://i.pravatar.cc/150?img=7",
-    listing: "Acropora Tricolor",
-    listingId: "l4",
-    unread: 0,
-    messages: [
-      { id: "m8", from: "other", text: "Versand ist heute rausgegangen – Tracking: CH83741", time: "Fr" },
-    ],
-  },
 ];
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set(["l2", "l5"]));
   const [conversations, setConversations] = useState<Conversation[]>(INITIAL_CONVS);
+  const [session, setSession] = useState<SessionUser | null>(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
 
-  const toggleSaved = useCallback((id: string) => {
+  const refreshSession = useCallback(async () => {
+    try {
+      const res = await fetch("/api/auth/me");
+      if (res.ok) {
+        const data = await res.json();
+        setSession(data.user ?? null);
+        if (data.user) {
+          const savedRes = await fetch("/api/saved");
+          if (savedRes.ok) {
+            const ids: string[] = await savedRes.json();
+            setSavedIds(new Set(ids));
+          }
+        }
+      } else {
+        setSession(null);
+      }
+    } catch {
+      setSession(null);
+    } finally {
+      setSessionLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshSession();
+  }, [refreshSession]);
+
+  const toggleSaved = useCallback(async (id: string) => {
     setSavedIds((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
+    try {
+      await fetch("/api/saved", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listingId: id }),
+      });
+    } catch {
+      // Revert optimistic update on failure
+      setSavedIds((prev) => {
+        const next = new Set(prev);
+        next.has(id) ? next.delete(id) : next.add(id);
+        return next;
+      });
+    }
   }, []);
 
   const isSaved = useCallback((id: string) => savedIds.has(id), [savedIds]);
@@ -107,7 +154,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       prev.map((c) => {
         if (c.id !== convId) return c;
         const newMsg: Message = { id: Date.now().toString(), from: "me", text, time: now() };
-        // Simulate reply after 1.5s
         setTimeout(() => {
           const replies = [
             "Danke für Ihre Nachricht! Ich melde mich bald.",
@@ -130,9 +176,44 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
-  const startConversation = useCallback((listingId: string, listingTitle: string, sellerName: string, sellerAvatar: string): string => {
+  const startConversation = useCallback(async (
+    listingId: string,
+    listingTitle: string,
+    sellerName: string,
+    sellerAvatar: string,
+    sellerId?: string,
+    message?: string,
+  ): Promise<string> => {
     const existing = conversations.find((c) => c.listingId === listingId);
     if (existing) return existing.id;
+
+    if (sellerId && message) {
+      try {
+        const res = await fetch("/api/conversations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sellerId, listingId, message }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const convId = data.conversationId;
+          const newConv: Conversation = {
+            id: convId,
+            name: sellerName,
+            avatar: sellerAvatar,
+            listing: listingTitle,
+            listingId,
+            unread: 0,
+            messages: [{ id: Date.now().toString(), from: "me", text: message, time: now() }],
+          };
+          setConversations((prev) => [newConv, ...prev]);
+          return convId;
+        }
+      } catch {
+        // fall through to local
+      }
+    }
+
     const id = `c-${Date.now()}`;
     const newConv: Conversation = {
       id,
@@ -141,7 +222,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       listing: listingTitle,
       listingId,
       unread: 0,
-      messages: [],
+      messages: message ? [{ id: Date.now().toString(), from: "me", text: message, time: now() }] : [],
     };
     setConversations((prev) => [newConv, ...prev]);
     return id;
@@ -153,10 +234,21 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const logout = useCallback(async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setSession(null);
+    setSavedIds(new Set());
+  }, []);
+
   const totalUnread = conversations.reduce((s, c) => s + c.unread, 0);
 
   return (
-    <StoreCtx.Provider value={{ savedIds, toggleSaved, isSaved, conversations, sendMessage, startConversation, markRead, totalUnread, notifications: totalUnread }}>
+    <StoreCtx.Provider value={{
+      savedIds, toggleSaved, isSaved,
+      conversations, sendMessage, startConversation, markRead,
+      totalUnread, notifications: totalUnread,
+      session, sessionLoading, refreshSession, logout,
+    }}>
       {children}
     </StoreCtx.Provider>
   );

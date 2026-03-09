@@ -4,10 +4,10 @@ import { listings } from "@/lib/data";
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const l = listings.find((x) => x.id === id);
-  if (!l) return { title: "Inserat | ReefPort" };
+  if (!l) return { title: "Inserat | Gesellschaftsbecken" };
 
   const priceStr = `${l.currency} ${l.price.toLocaleString("de-CH")}`;
-  const title = `${l.title}${l.latin ? ` (${l.latin})` : ""} – ${priceStr} | ReefPort`;
+  const title = `${l.title}${l.latin ? ` (${l.latin})` : ""} – ${priceStr} | Gesellschaftsbecken`;
   const description = `${l.subtitle}. ${l.condition} · ${l.location}${l.shipping ? " · Versand möglich" : ""}. ${l.description.slice(0, 120)}…`;
 
   return {
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       title: `${l.title} – ${priceStr}`,
       description,
       images: [{ url: l.image, width: 1200, height: 800, alt: l.title }],
-      url: `https://reefport.ch/listing/${id}`,
+      url: `https://gesellschaftsbecken.ch/listing/${id}`,
       type: "website",
     },
     twitter: {
