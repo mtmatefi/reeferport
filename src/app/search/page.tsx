@@ -54,7 +54,7 @@ function SearchContent() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Koralle, Fisch, Equipment, Ort…"
-              className="w-full border border-white/10 bg-white/4 py-2.5 pl-10 pr-10 text-[15px] text-white/88 placeholder-white/26 focus:border-white/22 focus:outline-none transition"
+              className="w-full border border-[rgba(45,200,190,0.12)] bg-[rgba(7,51,68,0.35)] py-2.5 pl-10 pr-10 text-[15px] text-white/88 placeholder-white/26 focus:border-[rgba(232,114,74,0.35)] focus:outline-none transition rounded-xl"
             />
             {q && (
               <button onClick={() => setQ("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/55 transition">
@@ -64,12 +64,12 @@ function SearchContent() {
           </div>
           <button
             onClick={() => setFiltersOpen((v) => !v)}
-            className={`relative flex h-[42px] w-[42px] shrink-0 items-center justify-center border transition ${filtersOpen || hasFilters ? "border-white/30 bg-white/8 text-white" : "border-white/10 text-white/44 hover:border-white/22 hover:text-white/70"}`}
+            className={`relative flex h-[42px] w-[42px] shrink-0 items-center justify-center border transition rounded-xl ${filtersOpen || hasFilters ? "border-[rgba(232,114,74,0.40)] bg-[rgba(232,114,74,0.10)] text-[#FF9972]" : "border-[rgba(45,200,190,0.14)] text-white/44 hover:border-[rgba(45,200,190,0.28)] hover:text-white/70"}`}
           >
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
               <path d="M4 6H20M7 12H17M10 18H14" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
             </svg>
-            {hasFilters && <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-[#60A5FA]" />}
+            {hasFilters && <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-[#E8724A]" />}
           </button>
         </div>
 
@@ -80,7 +80,7 @@ function SearchContent() {
             <div className="flex gap-2">
               {(["Alle", "B2C", "C2C"] as const).map((t) => (
                 <button key={t} onClick={() => setType(t)}
-                  className={`rounded-full border px-3.5 py-1.5 text-[12px] font-medium transition ${type === t ? "border-white/28 bg-white/9 text-white" : "border-white/8 text-white/40 hover:border-white/16"}`}>
+                  className={`rounded-full border px-3.5 py-1.5 text-[12px] font-medium transition ${type === t ? "border-[rgba(232,114,74,0.40)] bg-[rgba(232,114,74,0.10)] text-[#FF9972]" : "border-[rgba(45,200,190,0.09)] text-white/40 hover:border-[rgba(45,200,190,0.18)]"}`}>
                   {t === "B2C" ? "Händler" : t === "C2C" ? "Privat" : "Alle Typen"}
                 </button>
               ))}
@@ -89,7 +89,7 @@ function SearchContent() {
             <div className="flex flex-wrap gap-2">
               {catList.map((c) => (
                 <button key={c} onClick={() => toggleCat(c)}
-                  className={`rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${cats.has(c) ? "border-white/28 bg-white/9 text-white" : "border-white/8 text-white/40 hover:border-white/16"}`}>
+                  className={`rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${cats.has(c) ? "border-[rgba(232,114,74,0.40)] bg-[rgba(232,114,74,0.10)] text-[#FF9972]" : "border-[rgba(45,200,190,0.09)] text-white/40 hover:border-[rgba(45,200,190,0.18)]"}`}>
                   {c}
                 </button>
               ))}
@@ -97,9 +97,9 @@ function SearchContent() {
             {/* Price */}
             <div className="flex items-center gap-2 max-w-xs">
               <span className="text-[12px] text-white/34 shrink-0">CHF</span>
-              <input type="number" value={minP} onChange={(e) => setMinP(e.target.value)} placeholder="0" className="w-full border border-white/10 bg-white/4 px-2.5 py-2 text-[13px] text-white/78 placeholder-white/26 focus:border-white/22 focus:outline-none" />
+              <input type="number" value={minP} onChange={(e) => setMinP(e.target.value)} placeholder="0" className="w-full border border-[rgba(45,200,190,0.12)] bg-[rgba(7,51,68,0.3)] px-2.5 py-2 text-[13px] text-white/78 placeholder-white/26 focus:border-[rgba(232,114,74,0.35)] focus:outline-none rounded" />
               <span className="text-white/28">–</span>
-              <input type="number" value={maxP} onChange={(e) => setMaxP(e.target.value)} placeholder="∞" className="w-full border border-white/10 bg-white/4 px-2.5 py-2 text-[13px] text-white/78 placeholder-white/26 focus:border-white/22 focus:outline-none" />
+              <input type="number" value={maxP} onChange={(e) => setMaxP(e.target.value)} placeholder="∞" className="w-full border border-[rgba(45,200,190,0.12)] bg-[rgba(7,51,68,0.3)] px-2.5 py-2 text-[13px] text-white/78 placeholder-white/26 focus:border-[rgba(232,114,74,0.35)] focus:outline-none rounded" />
             </div>
             {hasFilters && (
               <button onClick={clearAll} className="text-[12px] text-white/36 underline underline-offset-2 hover:text-white/58 transition">
@@ -118,7 +118,7 @@ function SearchContent() {
         <div className="ml-auto flex shrink-0 gap-1">
           {SORTS.map((s) => (
             <button key={s} onClick={() => setSort(s)}
-              className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition ${s === sort ? "bg-white/9 text-white border border-white/14" : "text-white/36 hover:text-white/60"}`}>
+              className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition ${s === sort ? "bg-[rgba(232,114,74,0.10)] text-[#FF9972] border border-[rgba(232,114,74,0.30)]" : "text-white/36 hover:text-white/60"}`}>
               {s}
             </button>
           ))}
@@ -150,7 +150,7 @@ function SearchContent() {
           <div className="flex flex-wrap gap-2">
             {["Euphyllia", "Zoanthus", "Clownfisch", "Acropora", "Mandarin", "Tridacna", "LED Lampe"].map((s) => (
               <button key={s} onClick={() => setQ(s)}
-                className="rounded-full border border-white/8 px-3 py-1.5 text-[12px] text-white/38 transition hover:border-white/18 hover:text-white/62">
+                className="rounded-full border border-[rgba(45,200,190,0.10)] px-3 py-1.5 text-[12px] text-white/38 transition hover:border-[rgba(45,200,190,0.22)] hover:text-white/62">
                 {s}
               </button>
             ))}

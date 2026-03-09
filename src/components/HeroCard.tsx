@@ -16,14 +16,14 @@ export default function HeroCard({ listing }: { listing: Listing }) {
         loading="eager"
       />
       {/* Layered gradients for depth */}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.05)_25%,rgba(0,0,0,0.55)_65%,rgba(3,7,10,0.95)_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.15)_0%,transparent_60%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.05)_20%,rgba(7,28,40,0.65)_65%,rgba(7,28,40,0.97)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,28,40,0.20)_0%,transparent_60%)]" />
 
       {/* Top bar */}
       <div className="absolute left-0 right-0 top-0 flex items-start justify-between p-4">
         {listing.badge ? (
           <div className="flex items-center gap-1.5 rounded-full border border-white/14 bg-black/40 px-3 py-1.5 backdrop-blur-md">
-            <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-[#60A5FA]" />
+            <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-[#E8724A]" />
             <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/80">{listing.badge}</span>
           </div>
         ) : <div />}
@@ -70,7 +70,7 @@ export default function HeroCard({ listing }: { listing: Listing }) {
           <span className="text-[12px] font-medium text-white/52">{listing.seller.name}</span>
           {listing.seller.verified && (
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#60A5FA" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#2DD4BF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           )}
           <div className="ml-auto flex items-center gap-3 text-[12px] text-white/32">

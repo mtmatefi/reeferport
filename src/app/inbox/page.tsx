@@ -49,11 +49,11 @@ function InboxContent() {
             const isActive = conv.id === activeId;
             return (
               <button key={conv.id} onClick={() => setActiveId(conv.id)}
-                className={`flex items-start gap-3 px-4 py-4 text-left border-b border-white/5 transition ${isActive ? "bg-white/6" : "hover:bg-white/3"}`}>
+                className={`flex items-start gap-3 px-4 py-4 text-left border-b border-[rgba(45,200,190,0.06)] transition ${isActive ? "bg-[rgba(232,114,74,0.07)]" : "hover:bg-[rgba(7,51,68,0.4)]"}`}>
                 <div className="relative shrink-0">
                   <img src={conv.avatar} alt={conv.name} className="h-11 w-11 rounded-full object-cover" />
                   {conv.unread > 0 && (
-                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#60A5FA] px-1 text-[9px] font-semibold text-black">
+                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#E8724A] px-1 text-[9px] font-semibold text-white">
                       {conv.unread}
                     </span>
                   )}
@@ -79,7 +79,7 @@ function InboxContent() {
           <div className={`flex flex-col overflow-hidden ${activeId ? "flex" : "hidden md:flex"}`}>
             {/* Chat header */}
             <div className="shrink-0 flex items-center gap-3 border-b border-white/7 glass px-4 sm:px-6 py-3.5">
-              <button onClick={() => setActiveId(null)} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 hover:border-white/22 transition md:hidden">
+              <button onClick={() => setActiveId(null)} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[rgba(45,200,190,0.18)] hover:border-[rgba(45,200,190,0.35)] transition md:hidden">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="rgba(255,255,255,0.65)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </button>
               <img src={active.avatar} alt={active.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
@@ -93,7 +93,7 @@ function InboxContent() {
             <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-3">
               {active.messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.from === "me" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[78%] px-4 py-2.5 ${msg.from === "me" ? "rounded-l-2xl rounded-br-2xl bg-white/12" : "rounded-r-2xl rounded-bl-2xl bg-white/7"}`}>
+                  <div className={`max-w-[78%] px-4 py-2.5 ${msg.from === "me" ? "rounded-l-2xl rounded-br-2xl bg-[rgba(232,114,74,0.18)]" : "rounded-r-2xl rounded-bl-2xl bg-[rgba(7,51,68,0.55)] border border-[rgba(45,200,190,0.08)]"}`}>
                     <p className="text-[14px] leading-relaxed text-white/84">{msg.text}</p>
                     <p className={`mt-1 text-[10px] text-white/26 ${msg.from === "me" ? "text-right" : ""}`}>{msg.time}</p>
                   </div>
@@ -108,9 +108,9 @@ function InboxContent() {
                 <input ref={inputRef} type="text" value={draft} onChange={(e) => setDraft(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && send()}
                   placeholder="Nachricht schreiben…"
-                  className="flex-1 border border-white/10 bg-white/4 px-4 py-2.5 text-[14px] text-white/86 placeholder-white/26 focus:border-white/22 focus:outline-none transition" />
+                  className="flex-1 border border-[rgba(45,200,190,0.12)] bg-[rgba(7,51,68,0.3)] px-4 py-2.5 text-[14px] text-white/86 placeholder-white/26 focus:border-[rgba(232,114,74,0.35)] focus:outline-none transition rounded-xl" />
                 <button onClick={send} disabled={!draft.trim()}
-                  className="flex h-[42px] w-[42px] shrink-0 items-center justify-center bg-white text-black transition hover:bg-white/90 active:scale-90 disabled:opacity-30">
+                  className="flex h-[42px] w-[42px] shrink-0 items-center justify-center bg-[#E8724A] text-white transition hover:bg-[#FF8B6A] active:scale-90 disabled:opacity-30 rounded-xl" style={{ boxShadow: "0 4px 14px rgba(232,114,74,0.30)" }}>
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
                     <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>

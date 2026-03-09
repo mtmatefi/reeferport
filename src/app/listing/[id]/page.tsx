@@ -38,7 +38,7 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
     <div>
       {/* Top bar – sits below the global TopBar */}
       <div className="sticky top-12 z-20 flex items-center gap-3 border-b border-white/7 glass px-4 sm:px-6 lg:px-8 py-3">
-        <Link href="/" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 transition hover:border-white/22">
+        <Link href="/" className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(45,200,190,0.18)] transition hover:border-[rgba(45,200,190,0.35)]">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
             <path d="M15 18L9 12L15 6" stroke="rgba(255,255,255,0.65)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -48,7 +48,7 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
         </div>
         <button
           onClick={() => toggleSaved(listing.id)}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 transition hover:border-white/22 active:scale-90"
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(45,200,190,0.18)] transition hover:border-[rgba(45,200,190,0.35)] active:scale-90"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill={saved ? "white" : "none"} stroke={saved ? "white" : "rgba(255,255,255,0.55)"} strokeWidth="1.8">
             <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" strokeLinejoin="round" />
@@ -59,7 +59,7 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
             if (navigator.share) navigator.share({ title: listing.title, url: window.location.href });
             else navigator.clipboard.writeText(window.location.href);
           }}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 transition hover:border-white/22"
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(45,200,190,0.18)] transition hover:border-[rgba(45,200,190,0.35)]"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
             <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" stroke="rgba(255,255,255,0.55)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -94,7 +94,7 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
             <div className="flex gap-2 overflow-x-auto bg-[#03070A] px-4 sm:px-6 py-3 no-scrollbar">
               {listing.images.map((img, i) => (
                 <button key={i} onClick={() => setImgIdx(i)}
-                  className={`h-14 w-14 shrink-0 overflow-hidden border-2 transition-all ${i === imgIdx ? "border-white/55" : "border-transparent opacity-40 hover:opacity-65"}`}>
+                  className={`h-14 w-14 shrink-0 overflow-hidden border-2 transition-all rounded ${i === imgIdx ? "border-[#E8724A]" : "border-transparent opacity-40 hover:opacity-65"}`}>
                   <img src={img} alt="" className="h-full w-full object-cover" />
                 </button>
               ))}
@@ -106,13 +106,13 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
         <div className="px-4 sm:px-6 lg:px-8 pb-32 lg:pb-8">
           {/* Badges */}
           <div className="mt-5 mb-3 flex flex-wrap gap-2">
-            <span className="rounded-full border border-white/8 bg-white/4 px-2.5 py-1 text-[11px] text-white/46">{listing.category}</span>
-            <span className="rounded-full border border-white/8 bg-white/4 px-2.5 py-1 text-[11px] text-white/46">{listing.condition}</span>
+            <span className="rounded-full border border-[rgba(45,200,190,0.12)] bg-[rgba(45,200,190,0.05)] px-2.5 py-1 text-[11px] text-white/46">{listing.category}</span>
+            <span className="rounded-full border border-[rgba(45,200,190,0.12)] bg-[rgba(45,200,190,0.05)] px-2.5 py-1 text-[11px] text-white/46">{listing.condition}</span>
             {listing.listingType === "B2C" && (
-              <span className="tag-blue rounded-full px-2.5 py-1 text-[11px]">Händler</span>
+              <span className="tag-coral">Händler</span>
             )}
             {listing.badge && (
-              <span className="rounded-full border border-white/14 bg-white/6 px-2.5 py-1 text-[11px] font-medium text-white/58">{listing.badge}</span>
+              <span className="rounded-full border border-[rgba(45,200,190,0.14)] bg-[rgba(45,200,190,0.06)] px-2.5 py-1 text-[11px] font-medium text-white/58">{listing.badge}</span>
             )}
           </div>
 
@@ -151,7 +151,7 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
           <div className="mt-4 flex flex-wrap gap-1.5">
             {listing.tags.map((t) => (
               <Link key={t} href={`/search?q=${t}`}
-                className="rounded-full border border-white/8 px-2.5 py-1 text-[12px] text-white/40 transition hover:border-white/18 hover:text-white/62">
+                className="rounded-full border border-[rgba(45,200,190,0.10)] px-2.5 py-1 text-[12px] text-white/40 transition hover:border-[rgba(45,200,190,0.22)] hover:text-white/62">
                 #{t}
               </Link>
             ))}
@@ -161,14 +161,13 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
           <div className="mt-6 hidden lg:flex gap-3">
             <button
               onClick={() => setShowModal(true)}
-              className="flex-1 bg-white py-3.5 text-[14px] font-semibold text-black transition hover:bg-white/92 active:scale-[0.98]"
-              style={{ boxShadow: "0 8px 24px rgba(255,255,255,0.12)" }}
+              className="flex-1 btn-coral py-3.5 text-[14px] font-semibold active:scale-[0.98]"
             >
               Verkäufer kontaktieren
             </button>
             <button
               onClick={() => toggleSaved(listing.id)}
-              className={`flex h-[50px] w-[50px] items-center justify-center border transition hover:border-white/28 ${saved ? "border-white/36 bg-white/8" : "border-white/12"}`}
+              className={`flex h-[50px] w-[50px] items-center justify-center border transition ${saved ? "border-[rgba(232,114,74,0.45)] bg-[rgba(232,114,74,0.10)]" : "border-[rgba(45,200,190,0.14)] hover:border-[rgba(45,200,190,0.28)]"}`}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? "white" : "none"} stroke={saved ? "white" : "rgba(255,255,255,0.55)"} strokeWidth="1.8">
                 <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" strokeLinejoin="round" />
@@ -190,13 +189,13 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
             <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/30">Übergabe</h2>
             <div className="flex flex-wrap gap-2">
               {listing.pickup && (
-                <div className="flex items-center gap-2 rounded-full border border-white/9 px-3 py-2 text-[13px] text-white/52">
+                <div className="flex items-center gap-2 rounded-full border border-[rgba(45,200,190,0.12)] px-3 py-2 text-[13px] text-white/52">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" strokeWidth="1.7"/><circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="1.7"/></svg>
                   Abholung in {listing.location}
                 </div>
               )}
               {listing.shipping && (
-                <div className="flex items-center gap-2 rounded-full border border-white/9 px-3 py-2 text-[13px] text-white/52">
+                <div className="flex items-center gap-2 rounded-full border border-[rgba(45,200,190,0.12)] px-3 py-2 text-[13px] text-white/52">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="1" y="3" width="15" height="13" rx="1" stroke="currentColor" strokeWidth="1.7"/><path d="M16 8h4l3 3v5h-7V8z" stroke="currentColor" strokeWidth="1.7"/><circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" strokeWidth="1.5"/><circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" strokeWidth="1.5"/></svg>
                   Versand {listing.currency} {listing.shippingCost}
                 </div>
@@ -214,7 +213,7 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
                   <span className="text-[15px] font-semibold text-white/90 group-hover:text-white transition">{listing.seller.name}</span>
                   {listing.seller.verified && (
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#60A5FA" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#2DD4BF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   )}
                 </div>
@@ -232,7 +231,7 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
                 { v: `★ ${listing.seller.rating}`,    l: "Bewertung" },
                 { v: `${listing.seller.reviewCount}`,  l: "Reviews" },
               ].map((s) => (
-                <div key={s.l} className="border border-white/7 py-3 text-center">
+                <div key={s.l} className="border border-[rgba(45,200,190,0.08)] py-3 text-center rounded-lg">
                   <p className="text-[16px] font-semibold tracking-[-0.03em]">{s.v}</p>
                   <p className="mt-0.5 text-[10px] text-white/32">{s.l}</p>
                 </div>
@@ -268,14 +267,13 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
         <div className="mx-auto flex max-w-lg gap-3">
           <button
             onClick={() => setShowModal(true)}
-            className="flex-1 bg-white py-3.5 text-[14px] font-semibold text-black transition hover:bg-white/92 active:scale-[0.98]"
-            style={{ boxShadow: "0 8px 24px rgba(255,255,255,0.12)" }}
+            className="flex-1 btn-coral py-3.5 text-[14px] font-semibold active:scale-[0.98]"
           >
             Verkäufer kontaktieren
           </button>
           <button
             onClick={() => toggleSaved(listing.id)}
-            className={`flex h-[50px] w-[50px] items-center justify-center border transition ${saved ? "border-white/36 bg-white/8" : "border-white/12 hover:border-white/24"}`}
+            className={`flex h-[50px] w-[50px] items-center justify-center border transition ${saved ? "border-[rgba(232,114,74,0.45)] bg-[rgba(232,114,74,0.10)]" : "border-[rgba(45,200,190,0.14)] hover:border-[rgba(45,200,190,0.28)]"}`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? "white" : "none"} stroke={saved ? "white" : "rgba(255,255,255,0.55)"} strokeWidth="1.8">
               <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" strokeLinejoin="round" />
@@ -289,12 +287,12 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
         <div className="fixed inset-0 z-40 flex items-end sm:items-center justify-center bg-black/65 backdrop-blur-sm px-4 fade-in"
           onClick={() => !sent && setShowModal(false)}>
           <div
-            className="w-full max-w-lg border border-white/10 bg-[#080F17] p-6 pb-8 sm:pb-6 rounded-t-2xl sm:rounded-2xl slide-up"
+            className="w-full max-w-lg border border-[rgba(45,200,190,0.12)] bg-[#071C28] p-6 pb-8 sm:pb-6 rounded-t-2xl sm:rounded-2xl slide-up"
             onClick={(e) => e.stopPropagation()}
           >
             {sent ? (
               <div className="py-4 text-center scale-in">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white/10">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(45,200,190,0.12)]">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M5 13L9 17L19 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -317,17 +315,17 @@ export default function ListingPage({ params }: { params: Promise<{ id: string }
                   value={msgText}
                   onChange={(e) => setMsgText(e.target.value)}
                   rows={4}
-                  className="w-full resize-none border border-white/10 bg-white/4 p-3.5 text-[14px] leading-relaxed text-white/82 placeholder-white/28 focus:border-white/24 focus:outline-none transition"
+                  className="w-full resize-none border border-[rgba(45,200,190,0.12)] bg-[rgba(7,51,68,0.3)] p-3.5 text-[14px] leading-relaxed text-white/82 placeholder-white/28 focus:border-[rgba(232,114,74,0.35)] focus:outline-none transition rounded-lg"
                   onClick={(e) => { e.currentTarget.select(); }}
                 />
                 <div className="mt-3 flex gap-2.5">
-                  <button onClick={() => setShowModal(false)} className="flex-1 border border-white/10 py-3 text-[14px] font-medium text-white/46 transition hover:border-white/22 hover:text-white/70">
+                  <button onClick={() => setShowModal(false)} className="flex-1 border border-[rgba(45,200,190,0.14)] py-3 text-[14px] font-medium text-white/46 transition hover:border-[rgba(45,200,190,0.28)] hover:text-white/70 rounded-lg">
                     Abbrechen
                   </button>
                   <button
                     onClick={handleSend}
                     disabled={!msgText.trim()}
-                    className="flex-1 bg-white py-3 text-[14px] font-semibold text-black transition hover:bg-white/92 active:scale-[0.98] disabled:opacity-40"
+                    className="flex-1 btn-coral py-3 text-[14px] font-semibold active:scale-[0.98] disabled:opacity-40 rounded-lg"
                   >
                     Senden
                   </button>

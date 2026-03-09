@@ -44,7 +44,7 @@ export default function ProfilePage() {
       {/* Banner */}
       <div className="relative h-32 overflow-hidden bg-[#06111C]">
         <div className="absolute inset-0" style={{
-          background: "radial-gradient(ellipse 120% 200% at 30% 50%, rgba(96,165,250,0.22) 0%, rgba(45,212,191,0.10) 50%, transparent 70%)"
+          background: "radial-gradient(ellipse 120% 200% at 30% 50%, rgba(232,114,74,0.18) 0%, rgba(45,212,191,0.10) 50%, transparent 70%)"
         }} />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_50%,rgba(3,7,10,0.8)_100%)]" />
       </div>
@@ -58,12 +58,12 @@ export default function ProfilePage() {
             {me.verified && (
               <div className="absolute -bottom-0.5 -right-0.5 rounded-full bg-[#03070A] p-0.5">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#60A5FA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#2DD4BF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
             )}
           </div>
-          <Link href="/sell" className="border border-white/12 px-4 py-2 text-[13px] font-medium text-white/60 transition hover:border-white/24 hover:text-white/84">
+          <Link href="/sell" className="btn-coral px-4 py-2 text-[13px] font-semibold">
             + Inserieren
           </Link>
         </div>
@@ -71,17 +71,17 @@ export default function ProfilePage() {
         {/* Name */}
         <div className="mb-1 flex items-center gap-2.5 flex-wrap">
           <h1 className="text-[22px] font-semibold tracking-[-0.04em]">{me.name}</h1>
-          <span className="rounded-full border border-[rgba(96,165,250,0.22)] bg-[rgba(96,165,250,0.10)] px-2.5 py-0.5 text-[11px] text-[#93C5FD]">
+          <span className="tag-coral">
             {me.type}
           </span>
-          <span className="rounded-full border border-white/8 bg-white/4 px-2.5 py-0.5 text-[11px] text-white/42">
+          <span className="tag-teal">
             Verifiziert
           </span>
         </div>
         <p className="text-[14px] text-white/38">{me.location} · Mitglied seit {me.memberSince}</p>
 
         {/* Stats */}
-        <div className="mt-5 grid grid-cols-4 border border-white/7 divide-x divide-white/7">
+        <div className="mt-5 grid grid-cols-4 border border-[rgba(45,200,190,0.09)] divide-x divide-[rgba(45,200,190,0.09)] rounded-xl overflow-hidden">
           {[
             { v: `${me.salesCount}+`, l: "Verkäufe" },
             { v: `★ ${me.rating}`,    l: "Bewertung" },
@@ -103,7 +103,7 @@ export default function ProfilePage() {
               <button key={t} onClick={() => setTab(t)}
                 className={`relative shrink-0 pb-3 text-[14px] font-medium tracking-[-0.02em] transition-colors ${active ? "text-white" : "text-white/32 hover:text-white/62"}`}>
                 {t}
-                {active && <span className="absolute inset-x-0 bottom-0 h-[1.5px] bg-white/70 rounded-t-full" />}
+                {active && <span className="absolute inset-x-0 bottom-0 h-[1.5px] bg-[#E8724A] rounded-t-full" />}
               </button>
             );
           })}
@@ -134,7 +134,7 @@ export default function ProfilePage() {
         {tab === "Bewertungen" && (
           <div className="fade-up">
             {/* Summary */}
-            <div className="mb-6 flex items-center gap-6 border border-white/7 p-5">
+            <div className="mb-6 flex items-center gap-6 border border-[rgba(45,200,190,0.09)] p-5 rounded-xl">
               <div className="text-center">
                 <p className="text-[44px] font-semibold tracking-[-0.06em] leading-none">{me.rating}</p>
                 <div className="mt-2 flex justify-center"><Stars rating={Math.round(me.rating)} size={14} /></div>
@@ -148,7 +148,7 @@ export default function ProfilePage() {
                     <div key={s} className="flex items-center gap-2">
                       <span className="w-3 text-right text-[11px] text-white/30">{s}</span>
                       <div className="flex-1 h-1.5 rounded-full bg-white/7 overflow-hidden">
-                        <div className="h-full rounded-full bg-white/50 transition-all" style={{ width: `${pct}%` }} />
+                        <div className="h-full rounded-full bg-[#E8724A] transition-all" style={{ width: `${pct}%` }} />
                       </div>
                       <span className="w-7 text-[11px] text-white/26">{pct}%</span>
                     </div>
@@ -160,7 +160,7 @@ export default function ProfilePage() {
             {/* Reviews */}
             <div className="space-y-4 stagger">
               {REVIEWS.map((r) => (
-                <div key={r.id} className="border-b border-white/6 pb-5 last:border-0">
+                <div key={r.id} className="border-b border-[rgba(45,200,190,0.07)] pb-5 last:border-0">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex items-center gap-3">
                       <img src={r.avatar} alt={r.name} className="h-8 w-8 rounded-full object-cover" />
@@ -181,7 +181,7 @@ export default function ProfilePage() {
 
         {tab === "Info" && (
           <div className="space-y-4 fade-up max-w-2xl">
-            <div className="border border-white/7 p-5">
+            <div className="border border-[rgba(45,200,190,0.09)] p-5 rounded-xl">
               <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/28">Über den Verkäufer</h3>
               <p className="text-[14px] leading-[1.7] text-white/60">
                 Professioneller Meerwasser-Händler mit Fokus auf LPS-Korallen, Anemonen und seltene Fische.
@@ -189,7 +189,7 @@ export default function ProfilePage() {
                 Systemparameter werden täglich gemessen und dokumentiert. Über 10 Jahre Erfahrung in der Meerwasseraquaristik.
               </p>
             </div>
-            <div className="border border-white/7 p-5 space-y-3">
+            <div className="border border-[rgba(45,200,190,0.09)] p-5 space-y-3 rounded-xl">
               <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/28">Details</h3>
               {[
                 { icon: "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0zM12 10a3 3 0 110 0z", label: `Standort: ${me.location}` },

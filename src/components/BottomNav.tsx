@@ -23,9 +23,9 @@ export default function BottomNav() {
           if (item.sell) {
             return (
               <Link key="sell" href="/sell" className="flex justify-center py-1">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-[0_6px_20px_rgba(255,255,255,0.16)] transition active:scale-95">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E8724A] shadow-[0_6px_20px_rgba(232,114,74,0.35)] transition active:scale-95">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 5V19M5 12H19" stroke="#03070A" strokeWidth="2.2" strokeLinecap="round" />
+                    <path d="M12 5V19M5 12H19" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
                   </svg>
                 </div>
               </Link>
@@ -40,7 +40,7 @@ export default function BottomNav() {
                   <path d={item.d} stroke={active ? "white" : "rgba(255,255,255,0.34)"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill={active ? "rgba(255,255,255,0.08)" : "none"} />
                 </svg>
                 {isInbox && totalUnread > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#60A5FA] px-1 text-[9px] font-semibold text-black">
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#E8724A] px-1 text-[9px] font-semibold text-white">
                     {totalUnread}
                   </span>
                 )}
