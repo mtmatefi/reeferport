@@ -1,48 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, messages, conversations } from "@/lib/db";
-import { eq, asc, and } from "drizzle-orm";
-import { getSession } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 
-// GET /api/conversations/[id]/messages – fetch all messages, mark received as read
+// GET /api/conversations/[id]/messages
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession();
-  if (!session) return NextResponse.json([], { status: 401 });
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json([], { status: 401 });
 
   const { id: convId } = await params;
 
   // Verify user is part of this conversation
-  const [conv] = await db
-    .select()
-    .from(conversations)
-    .where(eq(conversations.id, convId))
-    .limit(1);
+  const { data: conv } = await supabase
+    .from("conversations")
+    .select("id, buyer_id, seller_id")
+    .eq("id", convId)
+    .maybeSingle();
 
-  if (!conv || (conv.buyerId !== session.id && conv.sellerId !== session.id)) {
+  if (!conv || (conv.buyer_id !== user.id && conv.seller_id !== user.id)) {
     return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
   }
 
-  const rows = await db
-    .select()
-    .from(messages)
-    .where(eq(messages.conversationId, convId))
-    .orderBy(asc(messages.createdAt));
+  const { data: rows } = await supabase
+    .from("messages")
+    .select("*")
+    .eq("conversation_id", convId)
+    .order("created_at", { ascending: true });
 
-  // Mark unread messages from the other party as read
-  await db
-    .update(messages)
-    .set({ read: true })
-    .where(and(
-      eq(messages.conversationId, convId),
-      eq(messages.read, false),
-    ));
-
-  return NextResponse.json(rows);
+  return NextResponse.json(rows ?? []);
 }
 
-// POST /api/conversations/[id]/messages { text } – send a message
+// POST /api/conversations/[id]/messages { text }
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Login erforderlich" }, { status: 401 });
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Login erforderlich" }, { status: 401 });
 
   const { id: convId } = await params;
   const { text } = await req.json();
@@ -51,21 +42,22 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Nachricht darf nicht leer sein" }, { status: 400 });
   }
 
-  // Verify user is part of this conversation
-  const [conv] = await db
-    .select()
-    .from(conversations)
-    .where(eq(conversations.id, convId))
-    .limit(1);
+  const { data: conv } = await supabase
+    .from("conversations")
+    .select("id, buyer_id, seller_id")
+    .eq("id", convId)
+    .maybeSingle();
 
-  if (!conv || (conv.buyerId !== session.id && conv.sellerId !== session.id)) {
+  if (!conv || (conv.buyer_id !== user.id && conv.seller_id !== user.id)) {
     return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
   }
 
-  const [msg] = await db
-    .insert(messages)
-    .values({ conversationId: convId, senderId: session.id, text: text.trim() })
-    .returning();
+  const { data: msg, error } = await supabase
+    .from("messages")
+    .insert({ conversation_id: convId, sender_id: user.id, text: text.trim() })
+    .select()
+    .single();
 
+  if (error) return NextResponse.json({ error: "Fehler beim Senden" }, { status: 500 });
   return NextResponse.json(msg);
 }

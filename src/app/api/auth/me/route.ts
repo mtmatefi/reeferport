@@ -1,35 +1,27 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
-import { createServerClient } from "@/lib/supabase";
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
-export async function GET(req: NextRequest) {
-  // 1. Try Supabase session from Authorization header
-  const authHeader = req.headers.get("authorization");
-  if (authHeader?.startsWith("Bearer ")) {
-    try {
-      const sb = createServerClient();
-      const { data: { user }, error } = await sb.auth.getUser(authHeader.replace("Bearer ", ""));
-      if (!error && user) {
-        const meta = user.user_metadata ?? {};
-        return NextResponse.json({
-          user: {
-            id: user.id,
-            name: meta.name ?? user.email ?? "",
-            email: user.email ?? "",
-            avatar: meta.avatar ?? "",
-            type: meta.type ?? "Privat",
-            location: meta.location ?? "",
-            verified: !!user.email_confirmed_at,
-          },
-        });
-      }
-    } catch {
-      // Supabase unreachable, fall through
-    }
-  }
+export async function GET() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // 2. Fallback to existing JWT cookie session
-  const user = await getSession();
   if (!user) return NextResponse.json({ user: null });
-  return NextResponse.json({ user });
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  return NextResponse.json({
+    user: {
+      id: user.id,
+      email: user.email!,
+      name: profile?.name ?? user.user_metadata?.name ?? user.email!.split("@")[0],
+      avatar: profile?.avatar ?? user.user_metadata?.avatar ?? `https://i.pravatar.cc/150?u=${user.email}`,
+      type: profile?.type ?? user.user_metadata?.type ?? "Privat",
+      location: profile?.location ?? user.user_metadata?.location ?? "Schweiz",
+      verified: profile?.verified ?? false,
+    },
+  });
 }

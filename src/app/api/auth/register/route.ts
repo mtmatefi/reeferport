@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, users } from "@/lib/db";
-import { eq } from "drizzle-orm";
-import { hash } from "bcryptjs";
-import { createSession, setSessionCookie, type SessionUser } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,24 +7,43 @@ export async function POST(req: NextRequest) {
     if (!email || !password || !name) {
       return NextResponse.json({ error: "Email, Passwort und Name sind erforderlich." }, { status: 400 });
     }
-    const exists = await db.select({ id: users.id }).from(users).where(eq(users.email, email.toLowerCase())).limit(1);
-    if (exists.length) {
-      return NextResponse.json({ error: "Diese E-Mail ist bereits registriert." }, { status: 409 });
-    }
-    const passwordHash = await hash(password, 10);
-    const [user] = await db.insert(users).values({
-      email: email.toLowerCase(),
-      passwordHash,
-      name,
-      location: location ?? "Schweiz",
-      type: type ?? "Privat",
-      avatar: `https://i.pravatar.cc/150?u=${email}`,
-    }).returning();
 
-    const sessionUser: SessionUser = { id: user.id, email: user.email, name: user.name, avatar: user.avatar, type: user.type, location: user.location, verified: user.verified };
-    const token = await createSession(sessionUser);
-    await setSessionCookie(token);
-    return NextResponse.json({ user: sessionUser });
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          location: location ?? "Schweiz",
+          type: type ?? "Privat",
+          avatar: `https://i.pravatar.cc/150?u=${email}`,
+        },
+      },
+    });
+
+    if (error) {
+      if (error.message.includes("already registered") || error.message.includes("already been registered")) {
+        return NextResponse.json({ error: "Diese E-Mail ist bereits registriert." }, { status: 409 });
+      }
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    if (!data.user) {
+      return NextResponse.json({ error: "Registrierung fehlgeschlagen." }, { status: 400 });
+    }
+
+    return NextResponse.json({
+      user: {
+        id: data.user.id,
+        email: data.user.email!,
+        name,
+        avatar: `https://i.pravatar.cc/150?u=${email}`,
+        type: type ?? "Privat",
+        location: location ?? "Schweiz",
+        verified: false,
+      },
+    });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "Server-Fehler. Bitte versuche es erneut." }, { status: 500 });
