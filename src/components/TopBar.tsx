@@ -141,7 +141,7 @@ export default function TopBar() {
           {/* Profile avatar (small) */}
           <Link href="/profile" className="relative hidden md:block">
             <img
-              src={session?.avatar ?? "https://i.pravatar.cc/150?img=47"}
+              src={session?.avatar || `https://i.pravatar.cc/150?u=${session?.email ?? "guest"}`}
               alt={session?.name ?? "Profil"}
               className={[
                 "rounded-full object-cover ring-1 ring-white/14 transition-all duration-300",
