@@ -22,6 +22,11 @@ export async function GET() {
       type: profile?.type ?? user.user_metadata?.type ?? "Privat",
       location: profile?.location ?? user.user_metadata?.location ?? "Schweiz",
       verified: profile?.verified ?? false,
+      rating: profile?.rating ?? 0,
+      reviewCount: profile?.review_count ?? 0,
+      memberSince: profile?.member_since ?? new Date().getFullYear().toString(),
+      salesCount: profile?.sales_count ?? 0,
+      bio: profile?.bio ?? "",
     },
   });
 }
