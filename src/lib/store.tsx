@@ -141,17 +141,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             });
             setSessionLoading(false);
           } else {
-            // Supabase has no session – fall back to JWT /api/auth/me
+            // No active Supabase session – fetch from API
             refreshSession();
           }
         });
         subscription = data.subscription;
       } catch {
-        // Supabase unavailable – JWT-only auth
+        // Supabase unavailable
       }
     }
 
-    // Initial check via JWT fallback
     refreshSession();
 
     return () => {
@@ -269,7 +268,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    // Sign out from both Supabase and JWT session
     try { await supabase.auth.signOut(); } catch { /* ignore if Supabase unreachable */ }
     await fetch("/api/auth/logout", { method: "POST" });
     setSession(null);
