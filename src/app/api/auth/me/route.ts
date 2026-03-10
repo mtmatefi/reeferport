@@ -17,10 +17,10 @@ export async function GET() {
     user: {
       id: user.id,
       email: user.email!,
-      name: profile?.name ?? user.email!.split("@")[0],
-      avatar: profile?.avatar ?? `https://i.pravatar.cc/150?u=${user.email}`,
-      type: profile?.type ?? "Privat",
-      location: profile?.location ?? "Schweiz",
+      name: profile?.name ?? user.user_metadata?.name ?? user.email!.split("@")[0],
+      avatar: profile?.avatar ?? user.user_metadata?.avatar ?? `https://i.pravatar.cc/150?u=${user.email}`,
+      type: profile?.type ?? user.user_metadata?.type ?? "Privat",
+      location: profile?.location ?? user.user_metadata?.location ?? "Schweiz",
       verified: profile?.verified ?? false,
     },
   });

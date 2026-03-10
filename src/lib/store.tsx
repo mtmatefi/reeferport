@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase";
 
 export interface Message {
   id: string;
@@ -76,52 +76,45 @@ const INITIAL_CONVS: Conversation[] = [
     unread: 0,
     messages: [
       { id: "m4", from: "me", text: "Verpackung war super, danke!", time: "Gestern" },
-      { id: "m5", from: "other", text: "Danke, Koralle ist super angekommen!", time: "Gestern" },
+      { id: "m5", from: "other", text: "Danke, Koralle ist super angekommen! ❤️", time: "Gestern" },
+    ],
+  },
+  {
+    id: "c3",
+    name: "CoralHaus Luzern",
+    avatar: "https://i.pravatar.cc/150?img=3",
+    listing: "Maxima Clam Electric Blue",
+    listingId: "l6",
+    unread: 0,
+    messages: [
+      { id: "m6", from: "me", text: "Haben Sie noch weitere Muscheln?", time: "Mo" },
+      { id: "m7", from: "other", text: "Ja, wir haben noch 2 Frags. Bitte um kurze Voranmeldung.", time: "Mo" },
     ],
   },
 ];
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set(["l2", "l5"]));
   const [conversations, setConversations] = useState<Conversation[]>(INITIAL_CONVS);
   const [session, setSession] = useState<SessionUser | null>(null);
   const [sessionLoading, setSessionLoading] = useState(true);
 
   const refreshSession = useCallback(async () => {
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
+      const res = await fetch("/api/auth/me");
+      if (res.ok) {
+        const data = await res.json();
+        setSession(data.user ?? null);
+        if (data.user) {
+          const savedRes = await fetch("/api/saved");
+          if (savedRes.ok) {
+            const ids: string[] = await savedRes.json();
+            setSavedIds(new Set(ids));
+          }
+        }
+      } else {
         setSession(null);
-        setSavedIds(new Set());
-        setSessionLoading(false);
-        return;
       }
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      setSession({
-        id: user.id,
-        email: user.email!,
-        name: profile?.name ?? user.email!.split("@")[0],
-        avatar: profile?.avatar ?? `https://i.pravatar.cc/150?u=${user.email}`,
-        type: profile?.type ?? "Privat",
-        location: profile?.location ?? "Schweiz",
-        verified: profile?.verified ?? false,
-      });
-
-      // Load saved listing IDs
-      const { data: saved } = await supabase
-        .from("saved_listings")
-        .select("listing_id")
-        .eq("user_id", user.id);
-      setSavedIds(new Set((saved ?? []).map((r: { listing_id: string }) => r.listing_id)));
-
     } catch {
       setSession(null);
     } finally {
@@ -130,20 +123,32 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refreshSession();
-
-    // Listen for auth state changes
-    const supabase = createClient();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, supabaseSession) => {
-      if (!supabaseSession) {
-        setSession(null);
-        setSavedIds(new Set());
+    // Listen for Supabase auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, sbSession) => {
+      if (sbSession?.user) {
+        const meta = sbSession.user.user_metadata ?? {};
+        setSession({
+          id: sbSession.user.id,
+          name: meta.name ?? sbSession.user.email ?? "",
+          email: sbSession.user.email ?? "",
+          avatar: meta.avatar ?? "",
+          type: meta.type ?? "Privat",
+          location: meta.location ?? "",
+          verified: !!sbSession.user.email_confirmed_at,
+        });
+        setSessionLoading(false);
       } else {
+        // Supabase has no session – fall back to JWT /api/auth/me
         refreshSession();
       }
     });
 
-    return () => subscription.unsubscribe();
+    // Also do initial check via JWT fallback
+    refreshSession();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [refreshSession]);
 
   const toggleSaved = useCallback(async (id: string) => {
@@ -159,6 +164,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ listingId: id }),
       });
     } catch {
+      // Revert optimistic update on failure
       setSavedIds((prev) => {
         const next = new Set(prev);
         next.has(id) ? next.delete(id) : next.add(id);
@@ -255,8 +261,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    // Sign out from both Supabase and JWT session
+    try { await supabase.auth.signOut(); } catch { /* ignore if Supabase unreachable */ }
+    await fetch("/api/auth/logout", { method: "POST" });
     setSession(null);
     setSavedIds(new Set());
   }, []);
