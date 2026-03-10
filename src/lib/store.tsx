@@ -134,7 +134,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
               id: sbSession.user.id,
               name: meta.name ?? sbSession.user.email ?? "",
               email: sbSession.user.email ?? "",
-              avatar: meta.avatar ?? "",
+              avatar: meta.avatar || `https://i.pravatar.cc/150?u=${sbSession.user.email}`,
               type: meta.type ?? "Privat",
               location: meta.location ?? "",
               verified: !!sbSession.user.email_confirmed_at,
