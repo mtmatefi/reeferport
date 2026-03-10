@@ -123,31 +123,39 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // Listen for Supabase auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, sbSession) => {
-      if (sbSession?.user) {
-        const meta = sbSession.user.user_metadata ?? {};
-        setSession({
-          id: sbSession.user.id,
-          name: meta.name ?? sbSession.user.email ?? "",
-          email: sbSession.user.email ?? "",
-          avatar: meta.avatar ?? "",
-          type: meta.type ?? "Privat",
-          location: meta.location ?? "",
-          verified: !!sbSession.user.email_confirmed_at,
-        });
-        setSessionLoading(false);
-      } else {
-        // Supabase has no session – fall back to JWT /api/auth/me
-        refreshSession();
-      }
-    });
+    let subscription: { unsubscribe: () => void } | null = null;
 
-    // Also do initial check via JWT fallback
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      try {
+        const { data } = supabase.auth.onAuthStateChange((_event, sbSession) => {
+          if (sbSession?.user) {
+            const meta = sbSession.user.user_metadata ?? {};
+            setSession({
+              id: sbSession.user.id,
+              name: meta.name ?? sbSession.user.email ?? "",
+              email: sbSession.user.email ?? "",
+              avatar: meta.avatar ?? "",
+              type: meta.type ?? "Privat",
+              location: meta.location ?? "",
+              verified: !!sbSession.user.email_confirmed_at,
+            });
+            setSessionLoading(false);
+          } else {
+            // Supabase has no session – fall back to JWT /api/auth/me
+            refreshSession();
+          }
+        });
+        subscription = data.subscription;
+      } catch {
+        // Supabase unavailable – JWT-only auth
+      }
+    }
+
+    // Initial check via JWT fallback
     refreshSession();
 
     return () => {
-      subscription.unsubscribe();
+      subscription?.unsubscribe();
     };
   }, [refreshSession]);
 
