@@ -18,7 +18,7 @@ function SearchContent() {
   const [type, setType] = useState<"Alle" | "B2C" | "C2C">("Alle");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const catList: Category[] = ["Korallen", "Fische", "Wirbellose", "Equipment", "Frags"];
+  const catList: Category[] = ["Korallen", "Anemonen", "Fische", "Wirbellose", "Equipment", "Frags"];
   const toggleCat = (c: Category) => setCats((p) => { const n = new Set(p); n.has(c) ? n.delete(c) : n.add(c); return n; });
   const clearAll = () => { setCats(new Set()); setMinP(""); setMaxP(""); setType("Alle"); setSort("Neueste"); };
   const hasFilters = cats.size > 0 || minP || maxP || type !== "Alle" || sort !== "Neueste";

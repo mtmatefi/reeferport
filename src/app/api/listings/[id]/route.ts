@@ -1,31 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, listings, users } from "@/lib/db";
-import { eq, sql } from "drizzle-orm";
-import { getSession } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const [row] = await db
-      .select({
-        listing: listings,
-        seller: { id: users.id, name: users.name, avatar: users.avatar, type: users.type, location: users.location, verified: users.verified, rating: users.rating, reviewCount: users.reviewCount, memberSince: users.memberSince, salesCount: users.salesCount },
-      })
-      .from(listings)
-      .innerJoin(users, eq(listings.sellerId, users.id))
-      .where(eq(listings.id, id))
-      .limit(1);
+    const supabase = await createClient();
 
-    if (!row) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
+    const { data, error } = await supabase
+      .from("listings")
+      .select(`*, seller:profiles(id, name, avatar, type, location, verified, rating, review_count, member_since, sales_count, bio)`)
+      .eq("id", id)
+      .single();
+
+    if (error || !data) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
 
     // Increment view count (fire and forget)
-    db.update(listings).set({ views: sql`${listings.views} + 1` }).where(eq(listings.id, id)).catch(() => {});
+    supabase.from("listings").update({ views: (data.views ?? 0) + 1 }).eq("id", id).then(() => {});
 
-    return NextResponse.json({
-      ...row.listing,
-      seller: row.seller,
-      postedAt: formatPostedAt(row.listing.createdAt),
-    });
+    return NextResponse.json({ ...data, postedAt: formatPostedAt(data.created_at) });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "Server-Fehler" }, { status: 500 });
@@ -33,16 +25,22 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Nicht eingeloggt" }, { status: 401 });
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Nicht eingeloggt" }, { status: 401 });
+
   const { id } = await params;
-  const [listing] = await db.select({ sellerId: listings.sellerId }).from(listings).where(eq(listings.id, id)).limit(1);
-  if (!listing || listing.sellerId !== session.id) return NextResponse.json({ error: "Nicht erlaubt" }, { status: 403 });
-  await db.delete(listings).where(eq(listings.id, id));
+  const { error } = await supabase
+    .from("listings")
+    .delete()
+    .eq("id", id)
+    .eq("seller_id", user.id);
+
+  if (error) return NextResponse.json({ error: "Nicht erlaubt" }, { status: 403 });
   return NextResponse.json({ ok: true });
 }
 
-function formatPostedAt(date: Date): string {
+function formatPostedAt(date: string): string {
   const diff = Date.now() - new Date(date).getTime();
   const h = Math.floor(diff / 3600000);
   const d = Math.floor(h / 24);

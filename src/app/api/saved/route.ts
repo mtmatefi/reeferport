@@ -1,36 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, savedListings, listings, users } from "@/lib/db";
-import { eq, and } from "drizzle-orm";
-import { getSession } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 
-// GET /api/saved – get user's saved listings
+// GET /api/saved – get user's saved listing IDs
 export async function GET() {
-  const session = await getSession();
-  if (!session) return NextResponse.json([]);
-  const rows = await db
-    .select({ listingId: savedListings.listingId })
-    .from(savedListings)
-    .where(eq(savedListings.userId, session.id));
-  return NextResponse.json(rows.map((r) => r.listingId));
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json([]);
+
+  const { data } = await supabase
+    .from("saved_listings")
+    .select("listing_id")
+    .eq("user_id", user.id);
+
+  return NextResponse.json((data ?? []).map((r) => r.listing_id));
 }
 
 // POST /api/saved { listingId } – toggle saved
 export async function POST(req: NextRequest) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Login erforderlich" }, { status: 401 });
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Login erforderlich" }, { status: 401 });
+
   const { listingId } = await req.json();
 
-  const existing = await db
-    .select()
-    .from(savedListings)
-    .where(and(eq(savedListings.userId, session.id), eq(savedListings.listingId, listingId)))
-    .limit(1);
+  const { data: existing } = await supabase
+    .from("saved_listings")
+    .select("listing_id")
+    .eq("user_id", user.id)
+    .eq("listing_id", listingId)
+    .maybeSingle();
 
-  if (existing.length) {
-    await db.delete(savedListings).where(and(eq(savedListings.userId, session.id), eq(savedListings.listingId, listingId)));
+  if (existing) {
+    await supabase.from("saved_listings").delete().eq("user_id", user.id).eq("listing_id", listingId);
     return NextResponse.json({ saved: false });
   } else {
-    await db.insert(savedListings).values({ userId: session.id, listingId });
+    await supabase.from("saved_listings").insert({ user_id: user.id, listing_id: listingId });
     return NextResponse.json({ saved: true });
   }
 }

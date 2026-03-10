@@ -1,6 +1,6 @@
-export type Category = "Korallen" | "Fische" | "Wirbellose" | "Equipment" | "Frags";
-export type Condition = "Nachzucht" | "Wildfang" | "Gebraucht" | "Neu";
-export type ListingType = "B2C" | "C2C";
+export type Category = "Korallen" | "Anemonen" | "Fische" | "Wirbellose" | "Equipment" | "Frags";
+export type Condition = "Nachzucht" | "Wildfang" | "Gebraucht" | "Neu" | "Neuwertig" | "Defekt/Ersatzteile";
+export type ListingType = "B2C" | "C2C" | "Verkaufen" | "Verschenken" | "Tauschen";
 
 export interface Seller {
   id: string;
@@ -1099,10 +1099,11 @@ export const listings: Listing[] = [
 ];
 
 export const categories: { label: Category | "Alle"; icon: string; count: number }[] = [
-  { label: "Alle",       icon: "◈", count: listings.length },
+  { label: "Alle",       icon: "◈",  count: listings.length },
   { label: "Korallen",   icon: "🪸", count: listings.filter((l) => l.category === "Korallen").length },
+  { label: "Anemonen",   icon: "🌺", count: listings.filter((l) => l.category === "Anemonen").length },
   { label: "Fische",     icon: "🐠", count: listings.filter((l) => l.category === "Fische").length },
   { label: "Wirbellose", icon: "🦞", count: listings.filter((l) => l.category === "Wirbellose").length },
-  { label: "Equipment",  icon: "💡", count: listings.filter((l) => l.category === "Equipment").length },
+  { label: "Equipment",  icon: "⚙️", count: listings.filter((l) => l.category === "Equipment").length },
   { label: "Frags",      icon: "🪨", count: listings.filter((l) => l.category === "Frags").length },
 ];

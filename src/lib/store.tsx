@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export interface Message {
   id: string;
@@ -75,45 +76,52 @@ const INITIAL_CONVS: Conversation[] = [
     unread: 0,
     messages: [
       { id: "m4", from: "me", text: "Verpackung war super, danke!", time: "Gestern" },
-      { id: "m5", from: "other", text: "Danke, Koralle ist super angekommen! ❤️", time: "Gestern" },
-    ],
-  },
-  {
-    id: "c3",
-    name: "CoralHaus Luzern",
-    avatar: "https://i.pravatar.cc/150?img=3",
-    listing: "Maxima Clam Electric Blue",
-    listingId: "l6",
-    unread: 0,
-    messages: [
-      { id: "m6", from: "me", text: "Haben Sie noch weitere Muscheln?", time: "Mo" },
-      { id: "m7", from: "other", text: "Ja, wir haben noch 2 Frags. Bitte um kurze Voranmeldung.", time: "Mo" },
+      { id: "m5", from: "other", text: "Danke, Koralle ist super angekommen!", time: "Gestern" },
     ],
   },
 ];
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set(["l2", "l5"]));
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [conversations, setConversations] = useState<Conversation[]>(INITIAL_CONVS);
   const [session, setSession] = useState<SessionUser | null>(null);
   const [sessionLoading, setSessionLoading] = useState(true);
 
   const refreshSession = useCallback(async () => {
     try {
-      const res = await fetch("/api/auth/me");
-      if (res.ok) {
-        const data = await res.json();
-        setSession(data.user ?? null);
-        if (data.user) {
-          const savedRes = await fetch("/api/saved");
-          if (savedRes.ok) {
-            const ids: string[] = await savedRes.json();
-            setSavedIds(new Set(ids));
-          }
-        }
-      } else {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
         setSession(null);
+        setSavedIds(new Set());
+        setSessionLoading(false);
+        return;
       }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      setSession({
+        id: user.id,
+        email: user.email!,
+        name: profile?.name ?? user.email!.split("@")[0],
+        avatar: profile?.avatar ?? `https://i.pravatar.cc/150?u=${user.email}`,
+        type: profile?.type ?? "Privat",
+        location: profile?.location ?? "Schweiz",
+        verified: profile?.verified ?? false,
+      });
+
+      // Load saved listing IDs
+      const { data: saved } = await supabase
+        .from("saved_listings")
+        .select("listing_id")
+        .eq("user_id", user.id);
+      setSavedIds(new Set((saved ?? []).map((r: { listing_id: string }) => r.listing_id)));
+
     } catch {
       setSession(null);
     } finally {
@@ -123,6 +131,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     refreshSession();
+
+    // Listen for auth state changes
+    const supabase = createClient();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, supabaseSession) => {
+      if (!supabaseSession) {
+        setSession(null);
+        setSavedIds(new Set());
+      } else {
+        refreshSession();
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [refreshSession]);
 
   const toggleSaved = useCallback(async (id: string) => {
@@ -138,7 +159,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ listingId: id }),
       });
     } catch {
-      // Revert optimistic update on failure
       setSavedIds((prev) => {
         const next = new Set(prev);
         next.has(id) ? next.delete(id) : next.add(id);
@@ -235,7 +255,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    const supabase = createClient();
+    await supabase.auth.signOut();
     setSession(null);
     setSavedIds(new Set());
   }, []);

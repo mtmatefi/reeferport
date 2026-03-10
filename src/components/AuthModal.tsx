@@ -1,18 +1,20 @@
 "use client";
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 interface AuthModalProps {
   onClose: () => void;
   onSuccess?: (user: { id: string; name: string; email: string; avatar: string }) => void;
   defaultTab?: "login" | "register";
-  reason?: string; // e.g. "um Inserate zu speichern"
+  reason?: string;
 }
 
 export default function AuthModal({ onClose, onSuccess, defaultTab = "login", reason }: AuthModalProps) {
   const [tab, setTab] = useState<"login" | "register">(defaultTab);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -32,29 +34,82 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
-    const url = tab === "login" ? "/api/auth/login" : "/api/auth/register";
-    const body = tab === "login"
-      ? { email: form.email, password: form.password }
-      : { name: form.name, email: form.email, password: form.password, location: form.location, type: form.type };
+    const supabase = createClient();
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    if (tab === "login") {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: form.email,
+        password: form.password,
+      });
 
-    const data = await res.json();
-    setLoading(false);
+      if (authError) {
+        setError("E-Mail oder Passwort falsch.");
+        setLoading(false);
+        return;
+      }
 
-    if (!res.ok) {
-      setError(data.error || "Fehler beim Anmelden.");
-      return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", data.user.id)
+        .single();
+
+      const user = {
+        id: data.user.id,
+        email: data.user.email!,
+        name: profile?.name ?? data.user.email!.split("@")[0],
+        avatar: profile?.avatar ?? `https://i.pravatar.cc/150?u=${data.user.email}`,
+      };
+
+      setLoading(false);
+      onSuccess?.(user);
+      onClose();
+      router.refresh();
+
+    } else {
+      const { data, error: authError } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+        options: {
+          data: {
+            name: form.name,
+            location: form.location,
+            type: form.type,
+            avatar: `https://i.pravatar.cc/150?u=${form.email}`,
+          },
+        },
+      });
+
+      if (authError) {
+        if (authError.message.includes("already")) {
+          setError("Diese E-Mail ist bereits registriert.");
+        } else {
+          setError(authError.message);
+        }
+        setLoading(false);
+        return;
+      }
+
+      setLoading(false);
+
+      if (data.session) {
+        // Auto-confirmed (email confirmation disabled in Supabase)
+        const user = {
+          id: data.user!.id,
+          email: data.user!.email!,
+          name: form.name,
+          avatar: `https://i.pravatar.cc/150?u=${form.email}`,
+        };
+        onSuccess?.(user);
+        onClose();
+        router.refresh();
+      } else {
+        // Email confirmation required
+        setSuccess("Bestätigungs-E-Mail gesendet! Bitte prüfe deinen Posteingang.");
+      }
     }
-
-    onSuccess?.(data.user);
-    onClose();
-    router.refresh();
   }
 
   return (
@@ -81,12 +136,12 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
         {/* Header */}
         <div className="mb-6">
           <div className="mb-1 flex items-center gap-2">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="text-blue-400">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="rgba(96,165,250,0.2)" stroke="currentColor" strokeWidth="1.5" />
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="text-[#2DC8BE]">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="rgba(45,200,190,0.15)" stroke="currentColor" strokeWidth="1.5" />
               <path d="M12 8v4m0 4h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
             <span className="text-sm text-white/50">
-              {reason ? `Bitte einloggen ${reason}` : "Willkommen bei Gesellschaftsbecken"}
+              {reason ? `Bitte einloggen ${reason}` : "Willkommen bei ReeferPort"}
             </span>
           </div>
           <h2 className="text-xl font-semibold text-white">
@@ -99,9 +154,9 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
           {(["login", "register"] as const).map((t) => (
             <button
               key={t}
-              onClick={() => { setTab(t); setError(""); }}
+              onClick={() => { setTab(t); setError(""); setSuccess(""); }}
               className={`flex-1 rounded-lg py-1.5 text-sm font-medium transition-all ${
-                tab === t ? "bg-blue-500/20 text-blue-300" : "text-white/40 hover:text-white/70"
+                tab === t ? "bg-[rgba(45,200,190,0.15)] text-[#2DC8BE]" : "text-white/40 hover:text-white/70"
               }`}
             >
               {t === "login" ? "Anmelden" : "Registrieren"}
@@ -119,7 +174,7 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
                   value={form.name}
                   onChange={set("name")}
                   placeholder="Dein Name"
-                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-blue-400/50 focus:ring-1 focus:ring-blue-400/30"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-[rgba(45,200,190,0.5)] focus:ring-1 focus:ring-[rgba(45,200,190,0.2)]"
                 />
               </div>
               <div className="flex gap-2">
@@ -129,7 +184,7 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
                     value={form.location}
                     onChange={set("location")}
                     placeholder="Zürich"
-                    className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-blue-400/50 focus:ring-1 focus:ring-blue-400/30"
+                    className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-[rgba(45,200,190,0.5)]"
                   />
                 </div>
                 <div className="flex-1">
@@ -137,7 +192,7 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
                   <select
                     value={form.type}
                     onChange={set("type")}
-                    className="w-full rounded-lg border border-white/10 bg-[#0B1420] px-3 py-2 text-sm text-white outline-none focus:border-blue-400/50"
+                    className="w-full rounded-lg border border-white/10 bg-[#0B1420] px-3 py-2 text-sm text-white outline-none focus:border-[rgba(45,200,190,0.5)]"
                   >
                     <option value="Privat">Privat</option>
                     <option value="Händler">Händler</option>
@@ -155,7 +210,7 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
               value={form.email}
               onChange={set("email")}
               placeholder="deine@email.ch"
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-blue-400/50 focus:ring-1 focus:ring-blue-400/30"
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-[rgba(45,200,190,0.5)] focus:ring-1 focus:ring-[rgba(45,200,190,0.2)]"
             />
           </div>
 
@@ -168,7 +223,7 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
               onChange={set("password")}
               placeholder={tab === "register" ? "Mindestens 6 Zeichen" : "••••••••"}
               minLength={tab === "register" ? 6 : undefined}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-blue-400/50 focus:ring-1 focus:ring-blue-400/30"
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-[rgba(45,200,190,0.5)] focus:ring-1 focus:ring-[rgba(45,200,190,0.2)]"
             />
           </div>
 
@@ -176,10 +231,14 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
             <p className="rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400">{error}</p>
           )}
 
+          {success && (
+            <p className="rounded-lg bg-green-500/10 px-3 py-2 text-xs text-green-400">{success}</p>
+          )}
+
           <button
             type="submit"
             disabled={loading}
-            className="mt-1 w-full rounded-xl bg-blue-500 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-400 active:scale-98 disabled:opacity-50"
+            className="mt-1 w-full rounded-xl bg-[#2DC8BE] py-2.5 text-sm font-semibold text-[#060D13] transition-all hover:bg-[#3DDDD3] active:scale-98 disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -193,12 +252,10 @@ export default function AuthModal({ onClose, onSuccess, defaultTab = "login", re
           </button>
         </form>
 
-        {tab === "login" && (
-          <div className="mt-4 rounded-xl border border-white/5 bg-white/3 p-3 text-xs text-white/40">
-            <p className="font-medium text-white/60">Demo-Zugänge:</p>
-            <p className="mt-1">demo@gesellschaftsbecken.ch / demo123</p>
-            <p>shop@reefalliance.ch / demo123</p>
-          </div>
+        {tab === "register" && (
+          <p className="mt-4 text-center text-[11px] text-white/28">
+            Mit der Registrierung stimmst du den Nutzungsbedingungen und der Datenschutzerklärung zu.
+          </p>
         )}
       </div>
     </div>
